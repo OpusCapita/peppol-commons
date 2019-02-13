@@ -79,9 +79,6 @@ public class ProcessingInfo implements Serializable {
         return currentEndpoint == null ? source : currentEndpoint;
     }
 
-    /**
-     * returns sending AP info for inbound and receiving AP info for outbound
-     */
     public ApInfo getApInfo() {
         PeppolMessageMetadata metadata = getPeppolMessageMetadata();
         if (metadata == null) {

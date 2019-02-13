@@ -44,6 +44,7 @@ public class DocumentHeaderParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
+     * @throws OxalisContentException
      * @return an instance of Header populated with data from the UBL XML document.
      */
     public Header parse(InputStream inputStream) throws OxalisContentException {
@@ -55,6 +56,7 @@ public class DocumentHeaderParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
+     * @throws OxalisContentException
      * @return an instance of PeppolStandardBusinessHeader populated with data from the UBL XML document.
      */
     private PeppolStandardBusinessHeader originalParse(InputStream inputStream) throws OxalisContentException {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 
 /**
- * Holds the whole data exchange bean inside the application.<br/>
+ * Holds the whole data exchange bean inside the application.
  * Consists of two parts - document information and process information.
  * The first one describes the real content of the document while the second is responsible for holding Peppol AP specific data.
  */

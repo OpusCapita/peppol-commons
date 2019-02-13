@@ -11,17 +11,22 @@ import java.util.concurrent.TimeoutException;
  */
 public interface MessageQueue {
     /**
-     * Connect and send a string message.
-     * Connection string format is:<br/><code>
+     * <p>Connect and send a string message.
+     * Connection string format is:</p>
+     * <code>
      *     queue_name:parameter1=value1,parameter2,parameter3=value3
-     * </code><br/>
-     * Where known parameters are:
+     * </code>
+     * <p>Where known parameters are:
      * <ul>
      *     <li>exchange=name - name of the exchange to use</li>
      *     <li>x-delay=n - will put a header to the message that is recognizable by delayed queue, delays message for n milliseconds</li>
-     * </ul><br/>
+     * </ul></p>
      * Without parameters simply represents the name of the queue to send to.
      *
+     * @param connectionString basically queue name with required additional info
+     * @param message container message itself
+     * @throws IOException
+     * @throws TimeoutException
      */
     void convertAndSend(@NotNull String connectionString, @NotNull ContainerMessage message) throws IOException, TimeoutException;
 

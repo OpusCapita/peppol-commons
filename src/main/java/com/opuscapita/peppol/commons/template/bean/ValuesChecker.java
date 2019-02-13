@@ -12,18 +12,16 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Base class for any bean that aims to check own parameters.<br/>
+ * <p>Base class for any bean that aims to check own parameters.</p>
  *
- * Usage:<br/>
+ * Usage:<br></br>
  * <pre>class Test extends ValuesChecker {
  *     \@Value{"${very.important.file}"}
  *     \@FileMustExist
  *     private String fileToVeryImportantFile;
  * }</pre>
  *
- * <br/>Supported annotation: FileMustExist
- *
- * @author Sergejs.Roze
+ * <p>Supported annotation: FileMustExist</p>
  */
 public class ValuesChecker {
 
