@@ -13,12 +13,14 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 
 jar {
     baseName = 'peppol-commons'
-    version = '0.0.1-SNAPSHOT'
+    version = '0.0.1'
     from sourceSets.main.allSource
     bootRepackage.enabled = false
 }
@@ -33,8 +35,10 @@ repositories {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-amqp'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-consul-config', version: '1.3.5.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    compile 'org.yaml:snakeyaml:1.17'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'commons-io:commons-io:2.5'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.intellij:annotations:12.0'
@@ -46,14 +50,147 @@ dependencies {
     compile group: 'no.difi.oxalis', name: 'oxalis-api', version: '4.0.2'
     compile group: 'no.difi.oxalis', name: 'oxalis-document-sniffer', version: '4.0.2'
     compile group: 'no.difi.oxalis', name: 'oxalis-statistics', version: '4.0.2'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-consul-config', version: '1.3.5.RELEASE'
 
     compile fileTree(dir: 'libs', include: '*.jar')
 
     testCompile 'junit:junit:4.12'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE'
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            customizePom(pom)
+            groupId 'com.opuscapita.peppol'
+            artifactId 'peppol-commons'
+            version '0.0.1'
+
+            from components.java
+
+            // create the sign pom artifact
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }
+
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            // create the signed artifacts
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username sonatypeUsername
+                password sonatypePassword
+            }
+        }
+    }
+}
+
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
+
+        // eliminate test-scoped dependencies (no need in maven central POMs)
+        root.dependencies.removeAll { dep ->
+            dep.scope == "test"
+        }
+
+        // add all items necessary for maven central publication
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
+
+            description 'Commons module for the Peppol services running on Andariel Platform'
+            name 'OpusCapita Peppol Commons'
+            url 'https://github.com/OpusCapita/peppol-commons'
+            organization {
+                name 'com.opuscapita.peppol'
+                url 'https://github.com/OpusCapita'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/OpusCapita/peppol-commons/issues'
+            }
+            licenses {
+                license {
+                    name 'Apache License 2.0'
+                    url 'https://github.com/OpusCapita/peppol-commons/blob/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                url 'https://github.com/OpusCapita/peppol-commons'
+                connection 'scm:git:git://github.com/OpusCapita/peppol-commons.git'
+                developerConnection 'scm:git:ssh://git@github.com:OpusCapita/peppol-commons.git'
+            }
+            developers {
+                developer {
+                    name 'thebilge'
+                }
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
     }
 }
