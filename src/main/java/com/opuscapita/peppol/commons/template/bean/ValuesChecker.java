@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 /**
  * <p>Base class for any bean that aims to check own parameters.</p>
  *
- * Usage:<br></br>
+ * Usage:
  * <pre>class Test extends ValuesChecker {
  *     \@Value{"${very.important.file}"}
  *     \@FileMustExist

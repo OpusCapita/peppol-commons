@@ -16,12 +16,12 @@ public interface MessageQueue {
      * <code>
      *     queue_name:parameter1=value1,parameter2,parameter3=value3
      * </code>
-     * <p>Where known parameters are:
+     * <p>Where known parameters are:</p>
      * <ul>
      *     <li>exchange=name - name of the exchange to use</li>
      *     <li>x-delay=n - will put a header to the message that is recognizable by delayed queue, delays message for n milliseconds</li>
-     * </ul></p>
-     * Without parameters simply represents the name of the queue to send to.
+     * </ul>
+     * <p>Without parameters simply represents the name of the queue to send to.</p>
      *
      * @param connectionString basically queue name with required additional info
      * @param message container message itself
