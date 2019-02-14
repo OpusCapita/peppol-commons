@@ -26,11 +26,11 @@ public class StorageImpl extends ValuesChecker implements Storage {
     private static final Logger logger = LoggerFactory.getLogger(StorageImpl.class);
 
     @FileMustExist
-    @Value("${peppol.storage.short}")
+    @Value("${peppol.storage.short:/tmp}")
     private String shortTerm;
 
     @FileMustExist
-    @Value("${peppol.storage.long}")
+    @Value("${peppol.storage.long:/tmp}")
     private String longTerm;
 
     private static String normalizeFilename(String s) {

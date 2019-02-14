@@ -22,8 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.security.cert.X509Certificate;
 
 @Singleton
-@Type("default")
-/* Copied from oxalis */
+@Type("opuscapita")
 public class DefaultStatisticsService extends Traceable implements StatisticsService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatisticsService.class);

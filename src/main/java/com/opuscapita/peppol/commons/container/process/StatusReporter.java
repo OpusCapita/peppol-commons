@@ -26,7 +26,7 @@ public class StatusReporter {
     private final MessageQueue rabbitTemplate;
     private final ErrorHandler errorHandler;
 
-    @Value("${peppol.eventing.queue.in.name}")
+    @Value("${peppol.eventing.queue.in.name:eventing}")
     private String reportDestination;
 
     @Autowired

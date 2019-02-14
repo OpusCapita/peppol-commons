@@ -26,14 +26,14 @@ public class DocumentLoader {
 
     private final DocumentParser documentParser;
     private final DocumentHeaderParser headerParser;
-    private final boolean shouldFailOnInconsistency;
+
+    @Value("${peppol.common.consistency_check_enabled:false}")
+    private boolean shouldFailOnInconsistency;
 
     @Autowired
-    public DocumentLoader(@NotNull DocumentParser documentParser, @Nullable DocumentHeaderParser headerParser,
-                          @Value("${peppol.common.consistency_check_enabled}") boolean shouldFailOnInconsistency) {
+    public DocumentLoader(@NotNull DocumentParser documentParser, @Nullable DocumentHeaderParser headerParser) {
         this.headerParser = headerParser;
         this.documentParser = documentParser;
-        this.shouldFailOnInconsistency = shouldFailOnInconsistency;
     }
 
     @NotNull
