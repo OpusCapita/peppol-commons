@@ -3,18 +3,23 @@ buildscript {
         springBootVersion = '1.4.2.RELEASE'
     }
     repositories {
+        jcenter()
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
+        classpath("com.bmuschko:gradle-nexus-plugin:2.3.1")
     }
+}
+
+plugins {
+    id 'io.codearte.nexus-staging' version '0.11.0'
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
+apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 
@@ -24,6 +29,10 @@ jar {
     from sourceSets.main.allSource
     bootRepackage.enabled = false
 }
+
+group = 'com.opuscapita.peppol'
+archivesBaseName = jar.baseName
+version = jar.version
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -62,133 +71,45 @@ dependencyManagement {
     }
 }
 
-task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allJava
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            customizePom(pom)
-            groupId 'com.opuscapita.peppol'
-            artifactId 'peppol-commons'
-            version '0.0.2'
-
-            from components.java
-
-            // create the sign pom artifact
-            pom.withXml {
-                def pomFile = file("${project.buildDir}/generated-pom.xml")
-                writeTo(pomFile)
-                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                artifact(pomAscFile) {
-                    classifier = null
-                    extension = 'pom.asc'
-                }
-            }
-
-            artifact(sourceJar) {
-                classifier = 'sources'
-            }
-
-            artifact(javadocJar) {
-                classifier = 'javadoc'
-            }
-
-            // create the signed artifacts
-            project.tasks.signArchives.signatureFiles.each {
-                artifact(it) {
-                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-                    if (matcher.find()) {
-                        classifier = matcher.group(1)
-                    } else {
-                        classifier = null
-                    }
-                    extension = 'jar.asc'
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
-            }
-        }
-    }
-}
-
-def customizePom(pom) {
-    pom.withXml {
-        def root = asNode()
-
-        // eliminate test-scoped dependencies (no need in maven central POMs)
-        root.dependencies.removeAll { dep ->
-            dep.scope == "test"
-        }
-
-        // add all items necessary for maven central publication
-        root.children().last() + {
-            resolveStrategy = Closure.DELEGATE_FIRST
-
-            description 'Commons module for the Peppol services running on Andariel Platform'
-            name 'OpusCapita Peppol Commons'
+modifyPom {
+    //noinspection GroovyAssignabilityCheck
+    project {
+        name 'OpusCapitaPeppolCommons'
+        description 'Commons module for the Peppol services running on Andariel Platform'
+        url 'https://github.com/OpusCapita/peppol-commons'
+        inceptionYear '2019'
+        scm {
             url 'https://github.com/OpusCapita/peppol-commons'
-            organization {
-                name 'com.opuscapita.peppol'
-                url 'https://github.com/OpusCapita'
+            connection 'scm:git:git://github.com/OpusCapita/peppol-commons.git'
+            developerConnection 'scm:git:ssh://git@github.com:OpusCapita/peppol-commons.git'
+        }
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'https://github.com/OpusCapita/peppol-commons/blob/master/LICENSE'
+                distribution 'repo'
             }
-            issueManagement {
-                system 'GitHub'
-                url 'https://github.com/OpusCapita/peppol-commons/issues'
-            }
-            licenses {
-                license {
-                    name 'Apache License 2.0'
-                    url 'https://github.com/OpusCapita/peppol-commons/blob/master/LICENSE'
-                    distribution 'repo'
-                }
-            }
-            scm {
-                url 'https://github.com/OpusCapita/peppol-commons'
-                connection 'scm:git:git://github.com/OpusCapita/peppol-commons.git'
-                developerConnection 'scm:git:ssh://git@github.com:OpusCapita/peppol-commons.git'
-            }
-            developers {
-                developer {
-                    name 'thebilge'
-                }
+        }
+        developers {
+            developer {
+                id 'thebilge'
+                name 'Ibrahim Bilge'
+                email 'Ibrahim.Bilge@opuscapita.com'
             }
         }
     }
 }
 
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-    tasks.publishMavenJavaPublicationToMavenLocal {
-        dependsOn project.tasks.signArchives
-    }
-    tasks.publishMavenJavaPublicationToMavenRepository {
-        dependsOn project.tasks.signArchives
-    }
+extraArchive {
+    sources = true
+    tests = true
+}
+nexus {
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+}
+
+nexusStaging {
+    packageGroup = "com.opuscapita.peppol"
 }
