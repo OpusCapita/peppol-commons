@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.config;
+package com.opuscapita.peppol.commons.container.xml;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
