@@ -25,7 +25,7 @@ apply plugin: "io.spring.dependency-management"
 
 jar {
     baseName = 'peppol-commons'
-    version = '0.0.2'
+    version = version
     from sourceSets.main.allSource
     bootRepackage.enabled = false
 }
