@@ -9,9 +9,16 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     echo "Creating Gradle Properties file..."
     touch $GRADLE_PROPERTIES
 
-    while read -r line; do
-        echo "version=$line" >> $GRADLE_PROPERTIES
-    done < "VERSION"
+    echo "Reading version, increasing and writing again.."
+    version_file=VERSION
+    IFS='.' read -r -a raw_version <<< "$(cat "$version_file")"
+    min_version=${raw_version[2]}
+    final_version="${raw_version[0]}.${raw_version[1]}.$(($min_version + 1))"
+    echo "$final_version" > $version_file
+    echo "version=$final_version" >> $GRADLE_PROPERTIES
+    git commit $version_file -m "Version: $final_version"
+    git status
+    git push origin master
 
     echo $GPG_PRIVATE_KEY | base64 --decode > secret.pgp
 
