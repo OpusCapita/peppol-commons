@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/build
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+      - checkout
+      - run:
+          name: "prepare environment"
+          command: ./setup.sh
+      - restore_cache:
+          key: peppol-commons-{{ checksum "build.gradle" }}
+      - run:
+          name: "install dependencies"
+          command: ./gradlew dependencies
+      - run:
+          name: "build"
+          command: ./gradlew build
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: peppol-commons-{{ checksum "build.gradle" }}
+      - run:
+          name: "run tests"
+          command: ./gradlew clean test
+      - run:
+          name: "save test report"
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
