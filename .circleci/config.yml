@@ -35,3 +35,9 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
