@@ -18,7 +18,9 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     echo "version=$final_version" >> $GRADLE_PROPERTIES
 
     echo "Pushing new version back to github"
-    git add VERSION
+    git config --global user.email "$GIT_EMAIL"
+    git config --global user.name "$GIT_NAME"
+    git add "VERSION"
     git commit -m "Version: $final_version"
     git push
 
