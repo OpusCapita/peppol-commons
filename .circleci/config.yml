@@ -25,6 +25,14 @@ jobs:
       - run:
           name: "Run Tests"
           command: ./gradlew clean test
+
+      - run:
+          name: "Upload Artifacts to Sonatype"
+          command: ./gradlew run uploadArchives
+      - run:
+          name: "Release the Version to Maven Central"
+          command: ./gradlew run closeAndReleaseRepository
+
       - run:
           name: "Save Test Report"
           command: |

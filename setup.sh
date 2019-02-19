@@ -13,7 +13,7 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     # get major version info from version file
     IFS='.' read -r -a raw_major_version <<< "$(cat "VERSION")"
     # get minor version info from git tags
-    IFS='.' read -r -a raw_minor_version <<< "$(git describe --tags)"
+    IFS='.' read -r -a raw_minor_version <<< "$(git describe --tags --abbrev=0)"
 
     min_version=${raw_minor_version[2]}
     final_version="${raw_major_version[0]}.${raw_major_version[1]}.$(($min_version + 1))"
