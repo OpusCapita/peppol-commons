@@ -10,19 +10,20 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     touch $GRADLE_PROPERTIES
 
     echo "Reading version and adding it to properties"
-    version_file=VERSION
-    IFS='.' read -r -a raw_version <<< "$(cat "$version_file")"
-    min_version=${raw_version[2]}
-    final_version="${raw_version[0]}.${raw_version[1]}.$(($min_version + 1))"
-    echo "$final_version" > $version_file
+    # get major version info from version file
+    IFS='.' read -r -a raw_major_version <<< "$(cat "VERSION")"
+    # get minor version info from git tags
+    IFS='.' read -r -a raw_minor_version <<< "$(git describe --tags)"
+
+    min_version=${raw_minor_version[2]}
+    final_version="${raw_major_version[0]}.${raw_major_version[1]}.$(($min_version + 1))"
     echo "version=$final_version" >> $GRADLE_PROPERTIES
 
-    echo "Pushing new version back to github"
+    echo "Tagging new version to github"
     git config --global user.email "$GIT_EMAIL"
     git config --global user.name "$GIT_NAME"
-    git add "VERSION"
-    git commit -m "Version: $final_version"
-    git push
+    git tag "$final_version"
+    git push origin "$final_version"
 
     echo $GPG_PRIVATE_KEY | base64 --decode > secret.pgp
 
