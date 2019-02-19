@@ -8,25 +8,25 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "prepare environment"
+          name: "Prepare Environment"
           command: chmod +x setup.sh && ./setup.sh
       - restore_cache:
           key: peppol-commons-{{ checksum "build.gradle" }}
       - run:
-          name: "install dependencies"
+          name: "Install Dependencies"
           command: chmod +x gradlew && ./gradlew dependencies
       - run:
-          name: "build"
+          name: "Build"
           command: ./gradlew build
       - save_cache:
           paths:
             - ~/.m2
           key: peppol-commons-{{ checksum "build.gradle" }}
       - run:
-          name: "run tests"
+          name: "Run Tests"
           command: ./gradlew clean test
       - run:
-          name: "save test report"
+          name: "Save Test Report"
           command: |
             mkdir -p ~/junit/
             find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
