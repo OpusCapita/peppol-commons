@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run:
           name: "prepare environment"
-          command: ./setup.sh
+          command: chmod +x setup.sh && ./setup.sh
       - restore_cache:
           key: peppol-commons-{{ checksum "build.gradle" }}
       - run:
