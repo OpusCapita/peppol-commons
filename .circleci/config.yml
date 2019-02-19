@@ -14,7 +14,7 @@ jobs:
           key: peppol-commons-{{ checksum "build.gradle" }}
       - run:
           name: "install dependencies"
-          command: ./gradlew dependencies
+          command: chmod +x gradlew && ./gradlew dependencies
       - run:
           name: "build"
           command: ./gradlew build
