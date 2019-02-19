@@ -18,10 +18,12 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     echo "version=$final_version" >> $GRADLE_PROPERTIES
 
     echo "Pushing new version back to github"
-    git config --global user.name "thebilge"
-    git commit VERSION -m "Version: $final_version"
-    git status
-    git push origin master
+    curl -s --header "Authorization: token $GIT_TOKEN" https://github.com/OpusCapita/peppol-commons
+    git config --global user.name "$GIT_USER"
+    git config --global user.email "$GIT_EMAIL"
+    git add VERSION
+    git commit -m "Version: $final_version"
+    git push
 
     echo $GPG_PRIVATE_KEY | base64 --decode > secret.pgp
 
