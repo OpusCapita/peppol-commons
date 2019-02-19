@@ -9,14 +9,17 @@ if [ ! -f "$GRADLE_PROPERTIES" ]; then
     echo "Creating Gradle Properties file..."
     touch $GRADLE_PROPERTIES
 
-    echo "Reading version, increasing and writing again.."
+    echo "Reading version and adding it to properties"
     version_file=VERSION
     IFS='.' read -r -a raw_version <<< "$(cat "$version_file")"
     min_version=${raw_version[2]}
     final_version="${raw_version[0]}.${raw_version[1]}.$(($min_version + 1))"
     echo "$final_version" > $version_file
     echo "version=$final_version" >> $GRADLE_PROPERTIES
-    git commit $version_file -m "Version: $final_version"
+
+    echo "Pushing new version back to github"
+    git config --global user.name "thebilge"
+    git commit VERSION -m "Version: $final_version"
     git status
     git push origin master
 
