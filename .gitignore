@@ -86,3 +86,5 @@ build/
 local.properties
 *.exe
 *.retry
+
+gradle.properties
