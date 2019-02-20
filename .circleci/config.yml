@@ -48,7 +48,7 @@ workflows:
   version: 2
   commit:
     jobs:
-      - build
-          filters:
-              branches:
-                only: master
+    - build:
+        filters:
+          branches:
+            only: master
