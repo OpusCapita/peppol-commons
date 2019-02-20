@@ -25,4 +25,9 @@ public class ApiListRestResponse {
     public void setServiceRoute(String serviceRoute) {
         this.serviceRoute = serviceRoute;
     }
+
+    @Override
+    public String toString() {
+        return "ApiListRestResponse{publicRoute: " + publicRoute + ", serviceRoute: " + serviceRoute + "}";
+    }
 }
