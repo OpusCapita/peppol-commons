@@ -11,7 +11,7 @@ import java.util.List;
  * @author Sergejs.Roze
  */
 @Component
-@ConfigurationProperties(prefix = "peppol.common.document_templates")
+//@ConfigurationProperties(prefix = "peppol.common.document_templates")
 public class DocumentTemplates {
     private List<DocumentTemplate> templates = new ArrayList<>();
 

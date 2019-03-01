@@ -27,13 +27,13 @@ public class AuthorizationService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationService.class);
 
-    @Value("${service-client.username}")
+    @Value("${service-client.username:''}")
     private String username;
-    @Value("${service-client.password}")
+    @Value("${service-client.password:''}")
     private String password;
-    @Value("${service-client.client-key}")
+    @Value("${service-client.client-key:''}")
     private String clientKey;
-    @Value("${service-client.client-secret}")
+    @Value("${service-client.client-secret:''}")
     private String clientSecret;
 
     @Value("${peppol.auth.url}")
