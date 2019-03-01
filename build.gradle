@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.2.RELEASE'
+        springBootVersion = '2.1.3.RELEASE'
     }
     repositories {
         jcenter()
@@ -8,7 +8,6 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
         classpath("com.bmuschko:gradle-nexus-plugin:2.3.1")
     }
 }
@@ -18,17 +17,14 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.bmuschko.nexus'
-apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 
 jar {
     baseName = 'peppol-commons'
     version = version
     from sourceSets.main.allSource
-    bootRepackage.enabled = false
 }
 
 group = 'com.opuscapita.peppol'
@@ -44,32 +40,34 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-amqp'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    compile 'com.google.guava:guava:24.0-jre'
     compile 'org.yaml:snakeyaml:1.17'
-    compile 'com.google.code.gson:gson:2.7'
     compile 'commons-io:commons-io:2.5'
-    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.intellij:annotations:12.0'
     compile 'com.rabbitmq:amqp-client:3.6.5'
+    compile 'com.google.guava:guava:24.0-jre'
+    compile 'org.apache.commons:commons-lang3:3.4'
 
     compile group: 'no.difi.vefa', name: 'peppol-sbdh', version: '1.0.4'
-    compile group: 'no.difi.oxalis', name: 'oxalis-commons', version: '4.0.2'
     compile group: 'no.difi.oxalis', name: 'oxalis-as2', version: '4.0.2'
     compile group: 'no.difi.oxalis', name: 'oxalis-api', version: '4.0.2'
-    compile group: 'no.difi.oxalis', name: 'oxalis-document-sniffer', version: '4.0.2'
+    compile group: 'no.difi.oxalis', name: 'oxalis-commons', version: '4.0.2'
     compile group: 'no.difi.oxalis', name: 'oxalis-statistics', version: '4.0.2'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-consul-config', version: '1.3.5.RELEASE'
+    compile group: 'no.difi.oxalis', name: 'oxalis-document-sniffer', version: '4.0.2'
+
+    compile 'org.springframework.boot:spring-boot-starter-web:2.1.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-amqp:2.1.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-cache:2.1.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa:2.1.3.RELEASE'
+    compile 'org.springframework.cloud:spring-cloud-starter-consul-config:2.1.0.RELEASE'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:2.1.3.RELEASE'
 }
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.RELEASE'
     }
 }
 
@@ -109,17 +107,15 @@ publishing {
         }
     }
 }
-
 extraArchive {
     sources = true
     tests = true
+}
+nexusStaging {
+    packageGroup = "com.opuscapita.peppol"
 }
 nexus {
     sign = true
     repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
     snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
-}
-
-nexusStaging {
-    packageGroup = "com.opuscapita.peppol"
 }

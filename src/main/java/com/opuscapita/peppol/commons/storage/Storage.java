@@ -1,92 +1,82 @@
 package com.opuscapita.peppol.commons.storage;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public interface Storage {
 
     /**
-     * Stores stream to temporary storage.
+     * Returns the file content as input stream
      *
-     * @param stream   the input stream
-     * @param fileName the name of the file to store
-     * @return the file ID
-     * @throws IOException something went wrong
+     * @param path full path of the file ex: "/peppol/hot/20190223/test.xml"
      */
-    @NotNull
-    String storeTemporary(@NotNull InputStream stream, @NotNull String fileName) throws IOException;
+    InputStream get(String path) throws StorageException;
 
     /**
-     * Stores stream to temporary storage with additional backup.
+     * Checks the folder and returns the full path of the files in that folder as a string list
      *
-     * @param stream    the input stream
-     * @param fileName  the name of the file to store
-     * @param backupDir the backup directory location, will be ignored on null value
-     * @return the file ID
-     * @throws IOException something went wrong
+     * @param folder the folder name to check, has to end with a slash ex: "/peppol/in/a2a/"
      */
-    @SuppressWarnings("SameParameterValue")
-    @NotNull
-    String storeTemporary(@NotNull InputStream stream, @NotNull String fileName, @Nullable String backupDir) throws IOException;
+    List<String> check(String folder) throws StorageException;
 
     /**
-     * Moves file to temporary storage.
+     * Puts file to the given folder, with the given filename
      *
-     * @param source the file to store
-     * @return the file ID
+     * @param content  the file content as input stream
+     * @param folder   the folder to put the file, has to end with a slash ex: "/peppol/in/xib/"
+     * @param filename the filename ex: "test.xml"
+     * @return the final full path of the file ex: "/peppol/in/xib/test.xml"
      */
-    @SuppressWarnings("unused")
-    @NotNull
-    String moveToTemporary(@NotNull File source) throws IOException;
+    String putToCustom(InputStream content, String folder, String filename) throws StorageException;
 
     /**
-     * Moves file to temporary storage and creates file backup.
+     * Puts file to the short-term storage folder, with the given filename
      *
-     * @param source    the file to store
-     * @param backupDir the backup directory location, will be ignored on null value
-     * @return the file ID
-     * @throws IOException something went wrong
+     * @param content  the file content as input stream
+     * @param filename the filename ex: "test.xml"
+     * @return the final full path of the file ex: "/peppol/hot/20199223/test.xml"
      */
-    @NotNull
-    String moveToTemporary(@NotNull File source, @Nullable String backupDir) throws IOException;
+    String putToTemporary(InputStream content, String filename) throws StorageException;
 
     /**
-     * Stores data to long-term storage.
+     * Puts file to the long-term storage folder, with the given filename
      *
-     * @param senderId    the sender ID, use empty line when missing
-     * @param recipientId the recipient ID, use empty line when missing
-     * @param fileName    the name of the file to store
-     * @return the file ID
+     * @param content  the file content as input stream
+     * @param filename the filename ex: "test.xml"
+     * @return the final full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
      */
-    @NotNull
-    String moveToLongTerm(@NotNull String senderId, @NotNull String recipientId, @NotNull String fileName) throws IOException;
+    String putToPermanent(InputStream content, String filename, String senderId, String receiverId) throws StorageException;
 
     /**
-     * Stores data to long-term storage.
+     * Moves file to the given folder
      *
-     * @param senderId    the sender ID, use empty line when missing
-     * @param recipientId the recipient ID, use empty line when missing
-     * @param input       the file to store
-     * @return the file ID
+     * @param path   the current full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
+     * @param folder the folder to put the file, has to end with a slash ex: "/peppol/out/xib/"
+     * @return the final full path of the file ex: "/peppol/out/xib/test.xml"
      */
-    @NotNull
-    String moveToLongTerm(@NotNull String senderId, @NotNull String recipientId, @NotNull File input) throws IOException;
+    String moveToCustom(String path, String folder) throws StorageException;
 
     /**
-     * Stores input stream data in a long term storage with a desired file name.
+     * Moves file to the short-term storage folder
      *
-     * @param senderId    the sender ID, use empty line when missing
-     * @param recipientId the recipient ID, use empty line when missing
-     * @param fileName    the desired name of the file
-     * @param inputStream the data to store
-     * @return the file ID
+     * @param path the current full path of the file ex: "/peppol/in/a2a/test.xml"
+     * @return the final full path of the file ex: "/peppol/hot/20199223/test.xml"
      */
-    @SuppressWarnings("UnusedReturnValue")
-    @NotNull
-    String storeLongTerm(@NotNull String senderId, @NotNull String recipientId, @NotNull String fileName, @NotNull InputStream inputStream) throws IOException;
+    String moveToTemporary(String path) throws StorageException;
+
+    /**
+     * Moves file to the long-term storage folder
+     *
+     * @param path the current full path of the file ex: "/peppol/hot/20199223/test.xml"
+     * @return the final full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
+     */
+    String moveToPermanent(String path, String senderId, String receiverId) throws StorageException;
+
+    /**
+     * Removes a file or a directory, note that if a directory is passed as parameter, it deletes recursively
+     *
+     * @param path the full path of the file or the directory ex: "/peppol/hot/20199223/test.xml"
+     */
+    void remove(String path) throws StorageException;
 
 }

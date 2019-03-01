@@ -30,9 +30,17 @@ nexusPassword=<YOUR_SONATYPE_PASSWORD>
 After you created gradle.properties file, run the following commands:
 
 ```$xslt
+# simple clean and build
 ./gradlew clean
 ./gradlew build
+
+# sign and upload artifacts to
+# sonatype staging repo: https://oss.sonatype.org
 ./gradlew uploadArchives
+
+# close and release the new version of library
+# it will be available in ~10m in Maven Central Repo: http://repo1.maven.org/maven2/com/opuscapita/peppol/peppol-commons/
+# and it will be available in ~2h in Maven Central Search: https://search.maven.org/
 ./gradlew closeAndReleaseRepository
 ```
 If you want to test your changes locally, you can publish to your local repository and depend it from your service. To publish to your local maven repository (`~/m2`) execute:
