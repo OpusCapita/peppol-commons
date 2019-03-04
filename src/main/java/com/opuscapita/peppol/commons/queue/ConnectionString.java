@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.mq;
+package com.opuscapita.peppol.commons.queue;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;

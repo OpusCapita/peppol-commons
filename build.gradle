@@ -47,6 +47,7 @@ dependencies {
     compile 'com.rabbitmq:amqp-client:3.6.5'
     compile 'com.google.guava:guava:24.0-jre'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'mysql:mysql-connector-java:5.1.25'
 
     compile group: 'no.difi.vefa', name: 'peppol-sbdh', version: '1.0.4'
     compile group: 'no.difi.oxalis', name: 'oxalis-as2', version: '4.0.2'

@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.mq;
+package com.opuscapita.peppol.commons.queue;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import org.jetbrains.annotations.NotNull;

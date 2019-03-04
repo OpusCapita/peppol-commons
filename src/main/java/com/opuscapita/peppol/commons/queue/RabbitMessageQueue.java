@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.mq;
+package com.opuscapita.peppol.commons.queue;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.ContainerMessageSerializer;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Lazy
-public class RabbitMq implements MessageQueue {
+public class RabbitMessageQueue implements MessageQueue {
 
     private final RabbitTemplate rabbitTemplate;
     private final ContainerMessageSerializer serializer;
 
     @Autowired
-    public RabbitMq(@NotNull RabbitTemplate rabbitTemplate, @NotNull ContainerMessageSerializer serializer) {
+    public RabbitMessageQueue(@NotNull RabbitTemplate rabbitTemplate, @NotNull ContainerMessageSerializer serializer) {
         this.rabbitTemplate = rabbitTemplate;
         this.serializer = serializer;
     }
