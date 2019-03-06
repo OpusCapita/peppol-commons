@@ -1,15 +1,16 @@
 # peppol-commons [![CircleCI](https://circleci.com/gh/OpusCapita/peppol-commons.svg?style=svg)](https://circleci.com/gh/OpusCapita/peppol-commons)
 
-Commons module for the Peppol services running on Andariel Platform.
+Common services for the Peppol services running on Andariel Platform.
 
-Common modules include;
-- ContainerMessage and related POJOs
-- MessageQueue Client
-- ServiceNow Client
-- Statistics Service
-- StorageService Client
+Common services include;
+- Container Message
+- Authorization Infra
+- Message Queue Client
+- ServiceNow Integration
+- Storage Implementations
 - EventingService Client
-- Oxalis Integration
+- Commons Rest Endpoints
+- Common Error Handler
 
 This project is being published as a library to [Maven Central Repository](https://search.maven.org/search?q=g:com.opuscapita.peppol%20AND%20a:peppol-commons&core=gav)
 
