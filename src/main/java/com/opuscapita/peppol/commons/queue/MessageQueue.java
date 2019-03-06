@@ -25,8 +25,8 @@ public interface MessageQueue {
      *
      * @param connectionString basically queue name with required additional info
      * @param message container message itself
-     * @throws IOException
-     * @throws TimeoutException
+     * @throws IOException conversion exception
+     * @throws TimeoutException connection exception
      */
     void convertAndSend(@NotNull String connectionString, @NotNull ContainerMessage message) throws IOException, TimeoutException;
 

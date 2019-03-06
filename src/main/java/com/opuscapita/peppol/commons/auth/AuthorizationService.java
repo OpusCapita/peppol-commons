@@ -75,6 +75,7 @@ public class AuthorizationService {
      * Fetches the id_token from the auth service
      * <p>
      * Note that this is only for direct accesses skipping kong.
+     * @return X-User-Id-Token
      */
     public String getUserIdTokenHeader() {
         AuthorizationResponse result = getTokenDetails(username);
