@@ -1,6 +1,6 @@
 package com.opuscapita.peppol.commons.model;
 
-import com.opuscapita.peppol.commons.container.process.route.ProcessType;
+import com.opuscapita.peppol.commons.container.state.ProcessType;
 
 public class PeppolEvent {
 

@@ -1,7 +1,7 @@
 package com.opuscapita.peppol.commons.container.document;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.process.route.Endpoint;
+import com.opuscapita.peppol.commons.container.state.Endpoint;
 import com.opuscapita.peppol.commons.validation.ValidationError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

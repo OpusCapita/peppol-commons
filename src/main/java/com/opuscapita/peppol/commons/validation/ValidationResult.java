@@ -3,8 +3,8 @@ package com.opuscapita.peppol.commons.validation;
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.document.DocumentError;
 import com.opuscapita.peppol.commons.container.document.DocumentWarning;
-import com.opuscapita.peppol.commons.container.process.route.Endpoint;
-import com.opuscapita.peppol.commons.container.process.route.ProcessType;
+import com.opuscapita.peppol.commons.container.state.Endpoint;
+import com.opuscapita.peppol.commons.container.state.ProcessType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -21,8 +21,8 @@ public class ValidationResult implements Serializable {
 
     @NotNull
     public static ValidationResult fromContainerMessage(@NotNull ContainerMessage cm) {
-        Endpoint endpoint = cm.getProcessingInfo() == null ?
-                new Endpoint("unknown", ProcessType.UNKNOWN) : cm.getProcessingInfo().getCurrentEndpoint();
+        Endpoint endpoint = cm.getCurrentEndpoint() == null ?
+                new Endpoint("unknown", ProcessType.UNKNOWN) : cm.getCurrentEndpoint();
 
         ValidationResult result = new ValidationResult();
         if (cm.getDocumentInfo() == null) {

@@ -1,164 +1,160 @@
 package com.opuscapita.peppol.commons.container;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.document.DocumentError;
-import com.opuscapita.peppol.commons.container.document.DocumentWarning;
-import com.opuscapita.peppol.commons.container.process.route.Endpoint;
+import com.opuscapita.peppol.commons.container.metadata.DocumentInfo;
+import com.opuscapita.peppol.commons.container.state.Endpoint;
+import com.opuscapita.peppol.commons.container.state.Route;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
-/**
- * Holds the whole data exchange bean inside the application.
- * Consists of two parts - document information and process information.
- * The first one describes the real content of the document while the second is responsible for holding Peppol AP specific data.
- */
 public class ContainerMessage implements Serializable {
 
     private static final long serialVersionUID = -5450780856722626102L;
 
     @Since(1.0) private String fileName;
     @Since(1.0) private String originalFileName = "";
+
+    @Since(1.0) private Route route;
+    @Since(1.0) private String currentStatus;
+    @Since(1.0) private Endpoint currentEndpoint;
+    @Since(1.0) private Endpoint sourceEndpoint;
+
+    @Since(1.0) private String processingException;
+    @Since(1.0) private PeppolMessageMetadata metadata;
+
     @Since(1.0) private DocumentInfo documentInfo;
-    @Since(1.0) private ProcessingInfo processingInfo;
 
     public ContainerMessage() {
     }
 
     public ContainerMessage(@NotNull String fileName, @NotNull Endpoint source) {
-        this.fileName = fileName;
-        this.processingInfo = new ProcessingInfo(source);
+        this.setFileName(fileName);
+        this.setSourceEndpoint(source);
     }
 
-    @NotNull
     public String getFileName() {
         return fileName;
     }
 
-    @NotNull
-    public ContainerMessage setFileName(@NotNull String fileName) {
+    public void setFileName(String fileName) {
         this.fileName = fileName;
-        return this;
     }
 
-    @NotNull
     public String getOriginalFileName() {
         if (StringUtils.isBlank(originalFileName)) {
-            return FilenameUtils.getBaseName(fileName);
+            return FilenameUtils.getBaseName(getFileName());
         }
         return originalFileName;
     }
 
-    public void setOriginalFileName(@NotNull String originalFileName) {
+    public void setOriginalFileName(String originalFileName) {
         this.originalFileName = FilenameUtils.getBaseName(originalFileName);
     }
 
-    @Nullable
-    public ProcessingInfo getProcessingInfo() {
-        return processingInfo;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setProcessingInfo(@NotNull ProcessingInfo processingInfo) {
-        this.processingInfo = processingInfo;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
-    @Nullable
-    public DocumentInfo getDocumentInfo() {
-        return documentInfo;
+    public String popRoute() {
+        if (getRoute() == null) {
+            return null;
+        }
+        return getRoute().pop();
     }
 
-    @NotNull
-    public ContainerMessage setDocumentInfo(@NotNull DocumentInfo documentInfo) {
-        this.documentInfo = documentInfo;
-        return this;
+    public Endpoint getSourceEndpoint() {
+        return sourceEndpoint;
+    }
+
+    public void setSourceEndpoint(Endpoint sourceEndpoint) {
+        this.sourceEndpoint = sourceEndpoint;
     }
 
     public boolean isInbound() {
-        return processingInfo.isInbound();
+        return getSourceEndpoint().isInbound();
     }
 
     public boolean isOutbound() {
         return !this.isInbound();
     }
 
-    @Nullable
+    public void setStatus(Endpoint endpoint, String status) {
+        this.setCurrentEndpoint(endpoint);
+        this.setCurrentStatus(status);
+    }
+
+    public Endpoint getCurrentEndpoint() {
+        return currentEndpoint;
+    }
+
+    public void setCurrentEndpoint(Endpoint currentEndpoint) {
+        this.currentEndpoint = currentEndpoint;
+    }
+
+    public String getCurrentStatus() {
+        if (StringUtils.isBlank(currentStatus)) {
+            return "unknown";
+        }
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
+    public String getProcessingException() {
+        return processingException;
+    }
+
+    public void setProcessingException(String processingException) {
+        this.processingException = processingException;
+    }
+
+    public PeppolMessageMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(PeppolMessageMetadata metadata) {
+        this.metadata = metadata;
+    }
+
     public String getCustomerId() {
-        if (getDocumentInfo() == null) {
+        if (getMetadata() == null) {
             return null;
         }
-        return isInbound() ? getDocumentInfo().getRecipientId() : getDocumentInfo().getSenderId();
+        return isInbound() ? getMetadata().getRecipientId() : getMetadata().getSenderId();
     }
 
-    @NotNull
-    public String getCorrelationId() {
-        if (processingInfo == null || StringUtils.isBlank(processingInfo.getTransactionId())) {
-            return fileName;
+    public ApInfo getApInfo() {
+        if (metadata == null) {
+            return null;
         }
-        return processingInfo.getTransactionId();
+        return ApInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
     }
 
-    public void setStatus(@NotNull Endpoint endpoint, @NotNull String status) {
-        processingInfo.setCurrentStatus(endpoint, status);
+    public DocumentInfo getDocumentInfo() {
+        return documentInfo;
     }
 
-    @Nullable
-    public String popRoute() {
-        if (processingInfo.getRoute() != null) {
-            return processingInfo.getRoute().pop();
-        }
-        return null;
-    }
-
-    public void addError(@NotNull DocumentError error) {
-        documentInfo.getErrors().add(error);
-    }
-
-    public void addWarning(@NotNull DocumentWarning warning) {
-        documentInfo.getWarnings().add(warning);
-    }
-
-    public void addError(@NotNull String message) {
-        addError(new DocumentError(processingInfo.getCurrentEndpoint(), message));
-    }
-
-    public boolean hasErrors() {
-        if (documentInfo != null && !documentInfo.getErrors().isEmpty()) {
-            return true;
-        }
-        return (processingInfo != null && processingInfo.getProcessingException() != null);
-    }
-
-    @Override
-    public String toString() {
-        String result = fileName;
-        if (processingInfo != null) {
-            result += " from " + processingInfo.getSource();
-        }
-        if (documentInfo != null) {
-            result += " [" + documentInfo.getClass().getName() + "]";
-        }
-        if (processingInfo != null && processingInfo.getRoute() != null) {
-            result += ": " + processingInfo.getRoute();
-        }
-
-        return result;
+    public void setDocumentInfo(DocumentInfo documentInfo) {
+        this.documentInfo = documentInfo;
     }
 
     public String toLog() {
         String result = "[file: {filename}, customer: {customer}, status: {status}, endpoint: {endpoint}]";
-        result = result.replace("{filename}", "{" + fileName + "}");
+        result = result.replace("{filename}", "{" + getFileName() + "}");
 
         String customerId = getCustomerId();
         result = result.replace("{customer}", "{" + (StringUtils.isBlank(customerId) ? "unknown" : customerId) + "}");
-
-        String status = processingInfo == null ? "unknown" : processingInfo.getCurrentStatus();
-        result = result.replace("{status}", "{" + (StringUtils.isBlank(status) ? "unknown" : status) + "}");
-
-        Endpoint endpoint = processingInfo == null ? null : processingInfo.getCurrentEndpoint();
-        result = result.replace("{endpoint}", "{" + (endpoint == null ? "unknown" : endpoint.getType()) + "}");
+        result = result.replace("{status}", "{" + (StringUtils.isBlank(getCurrentStatus()) ? "unknown" : getCurrentStatus()) + "}");
+        result = result.replace("{endpoint}", "{" + (getCurrentEndpoint() == null ? "unknown" : getCurrentEndpoint().getType()) + "}");
 
         return result;
     }
