@@ -60,7 +60,8 @@ public class CommonMessageProcessor implements ContainerMessageProcessor {
         }
 
         try {
-            eventReporter.reportError(cm, e);
+            cm.setProcessingException(e.getMessage());
+            eventReporter.reportStatus(cm);
         } catch (Exception weird) {
             logger.error("Failed to report error using event reporter", weird);
         }

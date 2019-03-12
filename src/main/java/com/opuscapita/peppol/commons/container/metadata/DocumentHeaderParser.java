@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.container.xml;
+package com.opuscapita.peppol.commons.container.metadata;
 
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
@@ -56,7 +56,7 @@ public class DocumentHeaderParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
-     * @throws OxalisContentException
+     * @throws OxalisContentException invalid file content
      * @return an instance of PeppolStandardBusinessHeader populated with data from the UBL XML document.
      */
     private PeppolStandardBusinessHeader originalParse(InputStream inputStream) throws OxalisContentException {

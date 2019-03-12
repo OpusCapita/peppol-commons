@@ -1,8 +1,8 @@
 package com.opuscapita.peppol.commons.container.document;
 
-import com.opuscapita.peppol.commons.container.metadata.DocumentInfo;
+import com.opuscapita.peppol.commons.container.deprecate.DocumentInfo;
 import com.opuscapita.peppol.commons.container.state.Endpoint;
-import com.opuscapita.peppol.commons.container.xml.DocumentHeaderParser;
+import com.opuscapita.peppol.commons.container.metadata.DocumentHeaderParser;
 import com.opuscapita.peppol.commons.container.xml.DocumentParser;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;

@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.container;
+package com.opuscapita.peppol.commons.container.metadata;
 
 import com.google.gson.annotations.Since;
 import no.difi.oxalis.api.inbound.InboundMetadata;
@@ -22,7 +22,7 @@ public class PeppolMessageMetadata implements Serializable {
 
     private static final long serialVersionUID = 2688223858360763842L;
 
-    private static final String OC_AP_COMMON_NAME = "C=FI, O=OpusCapita Solutions Oy, OU=PEPPOL PRODUCTION AP, CN=PNO000104";
+    public static final String OC_AP_COMMON_NAME = "C=FI, O=OpusCapita Solutions Oy, OU=PEPPOL PRODUCTION AP, CN=PNO000104";
 
     @Since(1.0) private String messageId;
     @Since(1.0) private String transmissionId;
@@ -179,8 +179,8 @@ public class PeppolMessageMetadata implements Serializable {
         metadata.setSenderId(header.getSender() != null ? header.getSender().getIdentifier() : null);
         metadata.setDocumentTypeIdentifier(header.getDocumentType().getIdentifier());
         metadata.setProfileTypeIdentifier(header.getProcess().getIdentifier());
-        metadata.setSendingAccessPoint(OC_AP_COMMON_NAME);
-        metadata.setReceivingAccessPoint(OC_AP_COMMON_NAME);
+//        metadata.setSendingAccessPoint(OC_AP_COMMON_NAME);
+//        metadata.setReceivingAccessPoint(OC_AP_COMMON_NAME);
         metadata.setProtocol(transmissionResult.getProtocol().getIdentifier());
         metadata.setSendersTimeStamp(transmissionResult.getTimestamp());
         metadata.setReceivedTimeStamp(new Date());

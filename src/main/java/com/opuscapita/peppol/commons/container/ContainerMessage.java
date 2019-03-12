@@ -1,7 +1,9 @@
 package com.opuscapita.peppol.commons.container;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.metadata.DocumentInfo;
+import com.opuscapita.peppol.commons.container.deprecate.DocumentInfo;
+import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
+import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
 import com.opuscapita.peppol.commons.container.state.Endpoint;
 import com.opuscapita.peppol.commons.container.state.Route;
 import org.apache.commons.io.FilenameUtils;
@@ -132,11 +134,11 @@ public class ContainerMessage implements Serializable {
         return isInbound() ? getMetadata().getRecipientId() : getMetadata().getSenderId();
     }
 
-    public ApInfo getApInfo() {
+    public AccessPointInfo getApInfo() {
         if (metadata == null) {
             return null;
         }
-        return ApInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
+        return AccessPointInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
     }
 
     public DocumentInfo getDocumentInfo() {

@@ -6,6 +6,4 @@ public interface EventReporter {
 
     void reportStatus(ContainerMessage cm);
 
-    void reportError(ContainerMessage cm, Throwable e);
-
 }

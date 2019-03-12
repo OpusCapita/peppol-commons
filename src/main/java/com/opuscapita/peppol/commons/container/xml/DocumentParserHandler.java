@@ -1,6 +1,6 @@
 package com.opuscapita.peppol.commons.container.xml;
 
-import com.opuscapita.peppol.commons.container.metadata.DocumentInfo;
+import com.opuscapita.peppol.commons.container.deprecate.DocumentInfo;
 import com.opuscapita.peppol.commons.container.document.Archetype;
 import com.opuscapita.peppol.commons.container.document.DocumentError;
 import com.opuscapita.peppol.commons.container.document.DocumentWarning;

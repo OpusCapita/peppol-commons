@@ -1,33 +1,33 @@
-package com.opuscapita.peppol.commons.container;
+package com.opuscapita.peppol.commons.container.metadata;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ApInfo {
+public class AccessPointInfo {
 
     private String id;
     private String name;
     private String subject;
     private String country;
 
-    private ApInfo(String id) {
+    private AccessPointInfo(String id) {
         this(id, null, null, null);
     }
 
-    private ApInfo(String id, String name, String subject, String country) {
+    private AccessPointInfo(String id, String name, String subject, String country) {
         this.id = id;
         this.name = name;
         this.subject = subject;
         this.country = country;
     }
 
-    public static ApInfo parseFromCommonName(String commonName) {
+    public static AccessPointInfo parseFromCommonName(String commonName) {
         if (StringUtils.isBlank(commonName)) {
             return null;
         }
 
         String[] parts = commonName.trim().split(",");
         if (parts.length == 1) {
-            return new ApInfo(commonName);
+            return new AccessPointInfo(commonName);
         }
 
         String id = null;
@@ -52,7 +52,7 @@ public class ApInfo {
             }
         }
 
-        return new ApInfo(id, name, subject, country);
+        return new AccessPointInfo(id, name, subject, country);
     }
 
     private static String getKeyValue(String[] keyValue) {

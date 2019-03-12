@@ -1,8 +1,8 @@
-package com.opuscapita.peppol.commons.container.metadata;
+package com.opuscapita.peppol.commons.container.deprecate;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.PeppolMessageMetadata;
-import com.opuscapita.peppol.commons.container.ApInfo;
+import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
+import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
 import com.opuscapita.peppol.commons.container.state.Endpoint;
 import com.opuscapita.peppol.commons.container.state.Route;
 import org.apache.commons.lang3.StringUtils;
@@ -77,12 +77,12 @@ public class ProcessingInfo implements Serializable {
         return currentEndpoint == null ? source : currentEndpoint;
     }
 
-    public ApInfo getApInfo() {
+    public AccessPointInfo getApInfo() {
         PeppolMessageMetadata metadata = getPeppolMessageMetadata();
         if (metadata == null) {
             return null;
         }
-        return ApInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
+        return AccessPointInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
     }
 
     @NotNull

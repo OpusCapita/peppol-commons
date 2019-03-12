@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.container.metadata;
+package com.opuscapita.peppol.commons.container.deprecate;
 
 import com.google.gson.annotations.Since;
 import com.opuscapita.peppol.commons.container.document.Archetype;
