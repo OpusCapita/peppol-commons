@@ -1,37 +1,27 @@
-package com.opuscapita.peppol.commons.validation;
+package com.opuscapita.peppol.commons.container.state.log;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.document.DocumentError;
-import com.opuscapita.peppol.commons.container.document.DocumentWarning;
-import com.opuscapita.peppol.commons.container.state.Endpoint;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ValidationError implements Serializable {
+public class DocumentValidationError implements Serializable {
 
     private static final long serialVersionUID = -5071816172421440591L;
 
-    @Since(1.0)
-    private String title;
-    @Since(1.0)
-    private String identifier;
-    @Since(1.0)
-    private String location;
-    @Since(1.0)
-    private String flag;
-    @Since(1.0)
-    private String text;
-    @Since(1.0)
-    private String test;
+    @Since(1.0) private String title;
+    @Since(1.0) private String identifier;
+    @Since(1.0) private String location;
+    @Since(1.0) private String flag;
+    @Since(1.0) private String text;
+    @Since(1.0) private String test;
 
-    public ValidationError() {
+    public DocumentValidationError() {
     }
 
-    public ValidationError(String title) {
+    public DocumentValidationError(String title) {
         this.title = title;
     }
 
@@ -39,7 +29,7 @@ public class ValidationError implements Serializable {
         return title;
     }
 
-    public ValidationError withTitle(String title) {
+    public DocumentValidationError withTitle(String title) {
         this.title = title;
         return this;
     }
@@ -48,7 +38,7 @@ public class ValidationError implements Serializable {
         return toString();
     }
 
-    public ValidationError withIdentifier(String identifier) {
+    public DocumentValidationError withIdentifier(String identifier) {
         this.identifier = identifier;
         this.identifier = extractIdentifierFromText();
         return this;
@@ -58,7 +48,7 @@ public class ValidationError implements Serializable {
         return identifier;
     }
 
-    public ValidationError withLocation(String location) {
+    public DocumentValidationError withLocation(String location) {
         this.location = location;
         return this;
     }
@@ -67,7 +57,7 @@ public class ValidationError implements Serializable {
         return location;
     }
 
-    public ValidationError withFlag(String flag) {
+    public DocumentValidationError withFlag(String flag) {
         this.flag = flag;
         return this;
     }
@@ -76,7 +66,7 @@ public class ValidationError implements Serializable {
         return flag;
     }
 
-    public ValidationError withText(String text) {
+    public DocumentValidationError withText(String text) {
         this.text = text;
         this.identifier = extractIdentifierFromText();
         return this;
@@ -86,7 +76,7 @@ public class ValidationError implements Serializable {
         return text;
     }
 
-    public ValidationError withTest(String test) {
+    public DocumentValidationError withTest(String test) {
         this.test = test;
         return this;
     }
@@ -108,16 +98,6 @@ public class ValidationError implements Serializable {
 
     public String getTest() {
         return test;
-    }
-
-    @NotNull
-    public DocumentError toDocumentError(@NotNull Endpoint source) {
-        return new DocumentError(source, this.toString(), this);
-    }
-
-    @NotNull
-    public DocumentWarning toDocumentWarning(@NotNull Endpoint source) {
-        return new DocumentWarning(source, this.toString(), this);
     }
 
     @Override

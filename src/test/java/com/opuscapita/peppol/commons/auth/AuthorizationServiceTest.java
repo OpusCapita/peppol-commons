@@ -1,6 +1,5 @@
 package com.opuscapita.peppol.commons.auth;
 
-import com.opuscapita.peppol.commons.container.xml.DocumentTemplates;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +22,6 @@ public class AuthorizationServiceTest {
 
     @MockBean
     private ErrorHandler errorHandler;
-
-    @MockBean
-    private DocumentTemplates documentTemplates;
 
     @Test
     @Ignore

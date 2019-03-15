@@ -12,7 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.SchemaFactory;
 
 @Configuration
-public class XmlParsersConfigurator {
+public class XmlParserConfigurator {
 
     @Bean
     @Lazy

@@ -1,10 +1,13 @@
 package com.opuscapita.peppol.commons.eventing.servicenow;
 
 import com.google.gson.annotations.SerializedName;
+import org.apache.commons.codec.binary.Hex;
 
-import java.text.DateFormat;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class SncEntity {
 
@@ -29,27 +32,14 @@ public class SncEntity {
     @SerializedName("u_email_to")
     private String emailTo;
 
-    public SncEntity(String shortDescription, String detailedDescription, String correlationId, String customerId, Integer priority) {
-        this.shortDescription = shortDescription;
-        this.detailedDescription = detailedDescription;
-        if (correlationId.length() > 80) {
-            correlationId = correlationId.substring(0, 79);
-        }
-
-        this.correlationId = correlationId;
+    public SncEntity(String shortDescription, String detailedDescription, String customerId) {
+        this.priority = "3";
         this.customerId = customerId;
-        if (priority < 0 || priority > 5) {
-            priority = 0;
-        }
-
-        if (priority == 0) {
-            priority = 3;
-        }
-
-        this.priority = priority.toString();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        this.occurredOn = dateFormat.format(new Date());
         this.emailTo = "info.no@opuscapita.com";
+        this.shortDescription = shortDescription;
+        this.correlationId = createCorrelationId();
+        this.detailedDescription = detailedDescription;
+        this.occurredOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
     public String getShortDescription() {
@@ -131,4 +121,19 @@ public class SncEntity {
     public void setEmailTo(String emailTo) {
         this.emailTo = emailTo;
     }
+
+    private String createCorrelationId() {
+        UUID uuid = UUID.randomUUID();
+        String generated = uuid.toString();
+        try {
+            generated = Hex.encodeHexString(MessageDigest.getInstance("SHA-1").digest(generated.getBytes()));
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        if (generated.length() > 80) {
+            generated = generated.substring(0, 79);
+        }
+        return generated;
+    }
+
 }

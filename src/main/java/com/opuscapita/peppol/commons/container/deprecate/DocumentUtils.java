@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.container.document;
+package com.opuscapita.peppol.commons.container.deprecate;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import org.jetbrains.annotations.NotNull;

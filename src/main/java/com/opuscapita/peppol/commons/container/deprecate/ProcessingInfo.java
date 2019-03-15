@@ -88,7 +88,7 @@ public class ProcessingInfo implements Serializable {
     @NotNull
     public String getOriginalSource() {
         if (StringUtils.isBlank(originalSource)) {
-            return source.getName();
+            return source.getSource();
         }
         return originalSource;
     }

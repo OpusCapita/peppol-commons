@@ -1,7 +1,6 @@
 package com.opuscapita.peppol.commons.container.state;
 
 import com.google.gson.annotations.Since;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -11,35 +10,48 @@ import java.io.Serializable;
  */
 public class Endpoint implements Serializable {
 
-    public static final Endpoint TEST = new Endpoint("test", ProcessType.TEST);
+    public static final Endpoint TEST = new Endpoint("test", ProcessFlow.IN, ProcessStep.TEST);
 
-    @Since(1.0) private final String name;
-    @Since(1.0) private final ProcessType type;
+    @Since(1.0) private final String source;
+    @Since(1.0) private final ProcessFlow flow;
+    @Since(1.0) private ProcessStep step;
 
-    public Endpoint(@NotNull String name, @NotNull ProcessType type) {
-        this.name = name;
-        this.type = type;
+    public Endpoint(String source, ProcessFlow flow) {
+        this(source, flow, ProcessStep.UNKNOWN);
     }
 
-    public String getName() {
-        return name;
+    public Endpoint(String source, ProcessFlow flow, ProcessStep step) {
+        this.flow = flow;
+        this.source = source;
+        this.step = step;
     }
 
-    public ProcessType getType() {
-        return type;
+    public String getSource() {
+        return source;
+    }
+
+    public ProcessFlow getFlow() {
+        return flow;
+    }
+
+    public ProcessStep getStep() {
+        return step;
+    }
+
+    public String getStepWithFlow() {
+        return flow.name() + "_" + step.name();
+    }
+
+    public void setStep(ProcessStep step) {
+        this.step = step;
     }
 
     public boolean isInbound() {
-        return type.toString().startsWith("IN_");
+        return ProcessFlow.IN.equals(flow);
     }
 
     public boolean isTerminal() {
-        switch (type) {
-            case OUT_OUTBOUND:
-            case IN_MQ_TO_FILE:
-                return true;
-        }
-        return false;
+        return ProcessStep.OUTBOUND.equals(step) || ProcessStep.MQ_TO_FILE.equals(step);
     }
 
     @Override
@@ -48,19 +60,20 @@ public class Endpoint implements Serializable {
         if (!(o instanceof Endpoint)) return false;
 
         Endpoint endpoint = (Endpoint) o;
-
-        return name.equals(endpoint.name) && type == endpoint.type;
+        return source.equals(endpoint.source) && step.equals(endpoint.step) && flow.equals(endpoint.flow);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + type.hashCode();
+        int result = source.hashCode();
+        result = 31 * result + step.hashCode();
+        result = 31 * result + flow.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "Service " + name + " (type:" + type + ")";
+        return "Service " + step + " (direction:" + flow + ")";
     }
+
 }

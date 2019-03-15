@@ -1,6 +1,5 @@
 package com.opuscapita.peppol.commons.eventing.servicenow;
 
-import com.opuscapita.peppol.commons.container.ContainerMessageSerializer;
 import com.opuscapita.peppol.commons.eventing.SncTicketReporter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,8 +14,8 @@ public class ServiceNowConfigurator {
     @Bean
     @Lazy
     @ConditionalOnMissingBean
-    public SncTicketReporter errorHandler(@NotNull ServiceNow serviceNowRest, @NotNull ContainerMessageSerializer serializer) {
-        return new SncTicketReporter(serviceNowRest, serializer);
+    public SncTicketReporter errorHandler(@NotNull ServiceNow serviceNowRest) {
+        return new SncTicketReporter(serviceNowRest);
     }
 
     @Bean

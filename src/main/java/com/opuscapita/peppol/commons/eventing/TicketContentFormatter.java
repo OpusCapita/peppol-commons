@@ -1,9 +1,9 @@
 package com.opuscapita.peppol.commons.eventing;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
-import com.opuscapita.peppol.commons.container.ContainerMessageSerializer;
-import com.opuscapita.peppol.commons.container.document.DocumentError;
-import com.opuscapita.peppol.commons.container.document.DocumentWarning;
+import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
+import com.opuscapita.peppol.commons.container.state.Route;
+import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class TicketContentFormatter {
 
-    static String getErrorDescription(ContainerMessage cm, Throwable e, String additionalDetails, ContainerMessageSerializer serializer) {
+    static String getErrorDescription(ContainerMessage cm, Throwable e, String additionalDetails) {
         String detailedDescription = "Failed to process message";
 
         detailedDescription += "\nFile name: " + cm.getFileName();
@@ -23,46 +23,31 @@ public class TicketContentFormatter {
             detailedDescription += "\nCustomerID: " + cm.getCustomerId();
         }
 
-        if (e != null && StringUtils.isNotBlank(e.getMessage())) {
-            detailedDescription += "\nError message: " + e.getMessage();
+        if (cm.getHistory().getLogs().size() > 0) {
+            detailedDescription += "\nDocument history: " +
+                    cm.getHistory().getLogs().stream().map(DocumentLog::toString).collect(Collectors.joining("\n\t ->"));
         }
 
         if (additionalDetails != null) {
-            detailedDescription += "\nDetails: " + additionalDetails;
+            detailedDescription += "\nAdditional details: " + additionalDetails;
         }
 
-        if (cm.getDocumentInfo() != null && cm.getDocumentInfo().getWarnings().size() > 0) {
-            detailedDescription += "\nDocument warnings: " +
-                    cm.getDocumentInfo().getWarnings().stream().map(DocumentWarning::toString).collect(Collectors.joining("\n\t"));
-        }
-        if (cm.getDocumentInfo() != null && cm.getDocumentInfo().getErrors().size() > 0) {
-            detailedDescription += "\nDocument errors: " +
-                    cm.getDocumentInfo().getErrors().stream().map(DocumentError::toString).collect(Collectors.joining("\n\t"));
-        }
-
-        detailedDescription += "\nLast processing status: " + cm.getCurrentStatus();
-
-        String processingException = cm.getProcessingException();
-        if (StringUtils.isNotBlank(processingException)) {
-            detailedDescription += "\nProcessing exception message: " + processingException;
-        }
+        String json = containerMessageDumb(cm);
+        detailedDescription += "\nMessage content dumb: \n" + json + "\n";
 
         String exceptionMessage = exceptionMessageToString(e);
         if (exceptionMessage != null) {
             detailedDescription += "\nPlatform exception message: " + exceptionMessage;
         }
 
-        String json = serializer.toJson(cm).replaceAll("\\{|\\}|\\\"|\\'", "");
-        detailedDescription += "\nMessage content: \n" + json + "\n";
-
         if (e != null) {
-            detailedDescription += "\n\nPlatform exception: " + ExceptionUtils.getStackTrace(e) + "\n";
+            detailedDescription += "\n\nPlatform exception trace: " + ExceptionUtils.getStackTrace(e) + "\n";
         }
 
         return detailedDescription;
     }
 
-    static String getErrorDescription(String customerId, Throwable e, String fileName, String additionalDetails) {
+    static String getErrorDescription(String customerId, String fileName, Throwable e, String additionalDetails) {
         String detailedDescription = "Failed to process message";
 
         if (fileName != null) {
@@ -73,8 +58,8 @@ public class TicketContentFormatter {
             detailedDescription += "\nCustomerID: " + customerId;
         }
 
-        if (e != null && StringUtils.isNotBlank(e.getMessage())) {
-            detailedDescription += "\nError message: " + e.getMessage();
+        if (additionalDetails != null) {
+            detailedDescription += "\nAdditional details: " + additionalDetails;
         }
 
         String exceptionMessage = exceptionMessageToString(e);
@@ -83,11 +68,7 @@ public class TicketContentFormatter {
         }
 
         if (e != null) {
-            detailedDescription += "\n\nPlatform exception: " + ExceptionUtils.getStackTrace(e) + "\n";
-        }
-
-        if (additionalDetails != null) {
-            detailedDescription += "\n\nAdditional details: " + additionalDetails + "\n";
+            detailedDescription += "\n\nPlatform exception trace: " + ExceptionUtils.getStackTrace(e) + "\n";
         }
 
         return detailedDescription;
@@ -101,5 +82,23 @@ public class TicketContentFormatter {
             return null;
         }
         return e.getMessage();
+    }
+
+    static String containerMessageDumb(ContainerMessage cm) {
+        Route route = cm.getRoute();
+        PeppolMessageMetadata metadata = cm.getMetadata();
+        return String.format("ContainerMessage{filename: %s, endpoint: {%s}, transmissionId: %s, " +
+                        "senderId: %s, receiverId: %s, sendingAccessPoint: %s, receivingAccessPoint: %s, " +
+                        "documentTypeIdentifier: %s, profileTypeIdentifier: %s, protocol: %s, route: %s}",
+                cm.getFileName(), cm.getEndpoint().toString(),
+                metadata == null ? "null" : metadata.getTransmissionId(),
+                metadata == null ? "null" : metadata.getSenderId(),
+                metadata == null ? "null" : metadata.getRecipientId(),
+                metadata == null ? "null" : metadata.getSendingAccessPoint(),
+                metadata == null ? "null" : metadata.getReceivingAccessPoint(),
+                metadata == null ? "null" : metadata.getDocumentTypeIdentifier(),
+                metadata == null ? "null" : metadata.getProfileTypeIdentifier(),
+                metadata == null ? "null" : metadata.getProtocol(),
+                route == null ? "null" : route.toString());
     }
 }

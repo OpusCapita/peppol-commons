@@ -1,6 +1,5 @@
 package com.opuscapita.peppol.commons.storage.blob;
 
-import com.opuscapita.peppol.commons.container.xml.DocumentTemplates;
 import com.opuscapita.peppol.commons.storage.StorageException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -32,9 +31,6 @@ public class BlobServiceClientTest {
 
     @MockBean
     private ErrorHandler errorHandler;
-
-    @MockBean
-    private DocumentTemplates documentTemplates;
 
     @Test
     @Ignore

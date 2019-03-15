@@ -45,7 +45,7 @@ public class AsyncMessageProcessor implements ContainerMessageProcessor {
     @Override
     public void process(@NotNull ContainerMessage cm) {
         try {
-            logger.info("Processing message: " + cm.toLog());
+            logger.info("Processing message: " + cm.toKibana());
             containerMessageConsumer.consume(cm);
         } catch (Exception e) {
             reportError(cm, e);
@@ -58,14 +58,14 @@ public class AsyncMessageProcessor implements ContainerMessageProcessor {
     private void reportError(ContainerMessage cm, Throwable e) {
         try {
             String shortDescription = StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : "Incident, UnknownError";
-            logger.warn("Message processing failed for " + cm.toLog() + " with error: " + e.getMessage());
+            logger.warn("Message processing failed for " + cm.toKibana() + " with error: " + e.getMessage());
             ticketReporter.reportWithContainerMessage(cm, e, shortDescription);
         } catch (Exception weird) {
             logger.error("Reporting to ServiceNow threw exception: ", weird);
         }
 
         try {
-            cm.setProcessingException(e.getMessage());
+            cm.getHistory().addError(e.getMessage());
             eventReporter.reportStatus(cm);
         } catch (Exception weird) {
             logger.error("Failed to report error using event reporter", weird);

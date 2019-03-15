@@ -1,14 +1,14 @@
 package com.opuscapita.peppol.commons.container;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.deprecate.DocumentInfo;
 import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
 import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
 import com.opuscapita.peppol.commons.container.state.Endpoint;
+import com.opuscapita.peppol.commons.container.state.ProcessStep;
 import com.opuscapita.peppol.commons.container.state.Route;
+import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -20,21 +20,16 @@ public class ContainerMessage implements Serializable {
     @Since(1.0) private String originalFileName = "";
 
     @Since(1.0) private Route route;
-    @Since(1.0) private String currentStatus;
-    @Since(1.0) private Endpoint currentEndpoint;
-    @Since(1.0) private Endpoint sourceEndpoint;
-
-    @Since(1.0) private String processingException;
     @Since(1.0) private PeppolMessageMetadata metadata;
-
-    @Since(1.0) private DocumentInfo documentInfo;
+    @Since(1.0) private ContainerMessageHistory history;
 
     public ContainerMessage() {
+        this.history = new ContainerMessageHistory(Endpoint.TEST);
     }
 
-    public ContainerMessage(@NotNull String fileName, @NotNull Endpoint source) {
-        this.setFileName(fileName);
-        this.setSourceEndpoint(source);
+    public ContainerMessage(String fileName, Endpoint endpoint) {
+        this.fileName = fileName;
+        this.history = new ContainerMessageHistory(endpoint);
     }
 
     public String getFileName() {
@@ -71,52 +66,24 @@ public class ContainerMessage implements Serializable {
         return getRoute().pop();
     }
 
-    public Endpoint getSourceEndpoint() {
-        return sourceEndpoint;
+    public ContainerMessageHistory getHistory() {
+        return history;
     }
 
-    public void setSourceEndpoint(Endpoint sourceEndpoint) {
-        this.sourceEndpoint = sourceEndpoint;
+    public Endpoint getEndpoint() {
+        return history.getEndpoint();
     }
 
     public boolean isInbound() {
-        return getSourceEndpoint().isInbound();
+        return getEndpoint().isInbound();
     }
 
     public boolean isOutbound() {
         return !this.isInbound();
     }
 
-    public void setStatus(Endpoint endpoint, String status) {
-        this.setCurrentEndpoint(endpoint);
-        this.setCurrentStatus(status);
-    }
-
-    public Endpoint getCurrentEndpoint() {
-        return currentEndpoint;
-    }
-
-    public void setCurrentEndpoint(Endpoint currentEndpoint) {
-        this.currentEndpoint = currentEndpoint;
-    }
-
-    public String getCurrentStatus() {
-        if (StringUtils.isBlank(currentStatus)) {
-            return "unknown";
-        }
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
-
-    public String getProcessingException() {
-        return processingException;
-    }
-
-    public void setProcessingException(String processingException) {
-        this.processingException = processingException;
+    public void setStep(ProcessStep step) {
+        this.getEndpoint().setStep(step);
     }
 
     public PeppolMessageMetadata getMetadata() {
@@ -141,22 +108,14 @@ public class ContainerMessage implements Serializable {
         return AccessPointInfo.parseFromCommonName(isInbound() ? metadata.getSendingAccessPoint() : metadata.getReceivingAccessPoint());
     }
 
-    public DocumentInfo getDocumentInfo() {
-        return documentInfo;
-    }
-
-    public void setDocumentInfo(DocumentInfo documentInfo) {
-        this.documentInfo = documentInfo;
-    }
-
-    public String toLog() {
-        String result = "[file: {filename}, customer: {customer}, status: {status}, endpoint: {endpoint}]";
+    public String toKibana() {
+        String result = "[file: {filename}, status: {status}, endpoint: {endpoint}]";
         result = result.replace("{filename}", "{" + getFileName() + "}");
 
-        String customerId = getCustomerId();
-        result = result.replace("{customer}", "{" + (StringUtils.isBlank(customerId) ? "unknown" : customerId) + "}");
-        result = result.replace("{status}", "{" + (StringUtils.isBlank(getCurrentStatus()) ? "unknown" : getCurrentStatus()) + "}");
-        result = result.replace("{endpoint}", "{" + (getCurrentEndpoint() == null ? "unknown" : getCurrentEndpoint().getType()) + "}");
+        DocumentLog log = history.getLastInfoLog();
+        result = result.replace("{status}", "{" + (log == null ? "unknown" : log.getMessage()) + "}");
+        Endpoint endpoint = getEndpoint();
+        result = result.replace("{endpoint}", "{" + (endpoint == null ? "unknown" : endpoint.getStepWithFlow()) + "}");
 
         return result;
     }

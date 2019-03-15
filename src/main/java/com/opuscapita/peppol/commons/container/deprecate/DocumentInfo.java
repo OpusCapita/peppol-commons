@@ -1,16 +1,11 @@
 package com.opuscapita.peppol.commons.container.deprecate;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.document.Archetype;
-import com.opuscapita.peppol.commons.container.document.DocumentError;
-import com.opuscapita.peppol.commons.container.document.DocumentWarning;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DocumentInfo implements Serializable {
 
@@ -47,11 +42,8 @@ public class DocumentInfo implements Serializable {
     @Since(1.0) private String customizationId = UNKNOWN_CUSTOMIZATION_ID;
     @Since(1.0) private String rootNameSpace;
     @Since(1.0) private String rootNodeName;
-    @Since(1.0) private Archetype archetype = Archetype.INVALID;
     @Since(1.0) private String documentType = UNKNOWN_DOCUMENT_TYPE;
     @Since(1.0) private String documentBusinessIdentifier = UNKNOWN_BUSINESS_IDENTIFIER;
-    @Since(1.0) private final List<DocumentError> errors = new ArrayList<>();
-    @Since(1.0) private final List<DocumentWarning> warnings = new ArrayList<>();
 
     public void with(@NotNull String key, @NotNull String value) {
         switch (key) {
@@ -223,31 +215,12 @@ public class DocumentInfo implements Serializable {
     }
 
     @NotNull
-    public Archetype getArchetype() {
-        return archetype;
-    }
-
-    public void setArchetype(@NotNull Archetype archetype) {
-        this.archetype = archetype;
-    }
-
-    @NotNull
     public String getDocumentType() {
         return documentType;
     }
 
     public void setDocumentType(@Nullable String documentType) {
         this.documentType = documentType;
-    }
-
-    @NotNull
-    public List<DocumentError> getErrors() {
-        return errors;
-    }
-
-    @NotNull
-    public List<DocumentWarning> getWarnings() {
-        return warnings;
     }
 
     @Nullable
