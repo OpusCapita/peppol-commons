@@ -8,9 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.xml.sax.ErrorHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,9 +26,6 @@ public class BlobServiceClientTest {
 
     @Autowired
     private BlobServiceClient client;
-
-    @MockBean
-    private ErrorHandler errorHandler;
 
     @Test
     @Ignore
@@ -89,4 +84,5 @@ public class BlobServiceClientTest {
         List<BlobServiceResponse> listResponse = client.listFolder(folder);
         assertTrue(listResponse.isEmpty());
     }
+
 }

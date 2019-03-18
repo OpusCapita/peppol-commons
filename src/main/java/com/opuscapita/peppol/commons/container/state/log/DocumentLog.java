@@ -71,6 +71,30 @@ public class DocumentLog implements Serializable {
         this.validationError = validationError;
     }
 
+    public boolean isInfo() {
+        return DocumentLogLevel.INFO.equals(level);
+    }
+
+    public boolean isWarning() {
+        return DocumentLogLevel.WARNING.equals(level);
+    }
+
+    public boolean isError() {
+        return DocumentLogLevel.ERROR.equals(level);
+    }
+
+    public boolean isProcessingError() {
+        return isError() && DocumentErrorType.PROCESSING_ERROR.equals(errorType);
+    }
+
+    public boolean isValidationError() {
+        return isError() && DocumentErrorType.VALIDATION_ERROR.equals(errorType);
+    }
+
+    public boolean isSendingError() {
+        return isError() && DocumentErrorType.SENDING_ERROR.equals(errorType);
+    }
+
     @Override
     public String toString() {
         String type = DocumentLogLevel.ERROR.equals(level) ? errorType.name() : level.name();

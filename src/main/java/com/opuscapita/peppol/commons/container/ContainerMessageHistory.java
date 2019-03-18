@@ -15,10 +15,8 @@ public class ContainerMessageHistory implements Serializable {
 
     private static final long serialVersionUID = -9016219790420895460L;
 
-    @Since(1.0)
-    private Endpoint endpoint;
-    @Since(1.0)
-    private List<DocumentLog> logs;
+    @Since(1.0) private Endpoint endpoint;
+    @Since(1.0) private List<DocumentLog> logs;
 
     ContainerMessageHistory(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -67,7 +65,7 @@ public class ContainerMessageHistory implements Serializable {
     }
 
     public boolean hasError() {
-        return this.logs.stream().anyMatch(log -> DocumentLogLevel.ERROR.equals(log.getLevel()));
+        return this.logs.stream().anyMatch(DocumentLog::isError);
     }
 
     public DocumentLog getLastLog() {
