@@ -23,6 +23,7 @@ public class DocumentLog implements Serializable {
 
     public DocumentLog(String message, DocumentLogLevel level) {
         this.message = message;
+        this.level = level;
     }
 
     public DocumentLog(String message, DocumentLogLevel level, DocumentErrorType errorType) {
