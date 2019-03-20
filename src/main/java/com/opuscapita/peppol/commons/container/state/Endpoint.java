@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 public class Endpoint implements Serializable {
 
+    private static final long serialVersionUID = -8305356325208895381L;
+
     public static final Endpoint TEST = new Endpoint("test", ProcessFlow.IN, ProcessStep.TEST);
 
     @Since(1.0) private final String source;

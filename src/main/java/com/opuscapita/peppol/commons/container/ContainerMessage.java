@@ -119,4 +119,5 @@ public class ContainerMessage implements Serializable {
 
         return result;
     }
+
 }

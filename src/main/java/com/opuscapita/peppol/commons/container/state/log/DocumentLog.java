@@ -9,21 +9,18 @@ public class DocumentLog implements Serializable {
 
     private static final long serialVersionUID = -4776734668982849414L;
 
-    @Since(1.0)
-    private String message;
-    @Since(1.0)
-    private DocumentLogLevel level;
-    @Since(1.0)
-    private DocumentErrorType errorType;
-    @Since(1.0)
-    private DocumentValidationError validationError;
+    @Since(1.0) private String message;
+    @Since(1.0) private Boolean isPersisted;
+    @Since(1.0) private DocumentLogLevel level;
+    @Since(1.0) private DocumentErrorType errorType;
+    @Since(1.0) private DocumentValidationError validationError;
 
-    @Since(1.0)
-    private ProcessStep source;
+    @Since(1.0) private ProcessStep source;
 
     public DocumentLog(String message, DocumentLogLevel level) {
-        this.message = message;
         this.level = level;
+        this.message = message;
+        this.isPersisted = false;
     }
 
     public DocumentLog(String message, DocumentLogLevel level, DocumentErrorType errorType) {
@@ -37,6 +34,14 @@ public class DocumentLog implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Boolean isPersisted() {
+        return isPersisted;
+    }
+
+    public void setPersisted(Boolean persisted) {
+        isPersisted = persisted;
     }
 
     public DocumentLogLevel getLevel() {
@@ -62,7 +67,6 @@ public class DocumentLog implements Serializable {
     public void setSource(ProcessStep source) {
         this.source = source;
     }
-
 
     public DocumentValidationError getValidationError() {
         return validationError;
@@ -101,4 +105,5 @@ public class DocumentLog implements Serializable {
         String type = DocumentLogLevel.ERROR.equals(level) ? errorType.name() : level.name();
         return String.format("%s from %s: %s", type, source, message);
     }
+
 }

@@ -1,8 +1,6 @@
 package com.opuscapita.peppol.commons.container.state;
 
 import com.google.gson.annotations.Since;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,19 +19,50 @@ public class Route implements Serializable {
     public Route() {
     }
 
-    public Route(@NotNull Route other) {
+    public Route(Route other) {
         this.endpoints = other.getEndpoints();
         this.description = other.getDescription();
         this.mask = other.getMask();
         this.source = other.getSource();
     }
 
-    @Nullable
     public String pop() {
         if (current >= endpoints.size()) {
             return null;
         }
         return endpoints.get(current++);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getMask() {
+        return mask;
+    }
+
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public List<String> getEndpoints() {
+        return endpoints;
+    }
+
+    public void setEndpoints(List<String> endpoints) {
+        this.endpoints = endpoints;
     }
 
     @Override
@@ -47,42 +76,6 @@ public class Route implements Serializable {
             result.append(endpoint).append(" ");
         }
         return result + "]";
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    @Nullable
-    public String getMask() {
-        return mask;
-    }
-
-    public void setMask(@Nullable String mask) {
-        this.mask = mask;
-    }
-
-    @NotNull
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(@NotNull String source) {
-        this.source = source;
-    }
-
-    @NotNull
-    public List<String> getEndpoints() {
-        return endpoints;
-    }
-
-    public void setEndpoints(@NotNull List<String> endpoints) {
-        this.endpoints = endpoints;
     }
 
 }
