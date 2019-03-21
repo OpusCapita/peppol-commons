@@ -10,6 +10,7 @@ import com.opuscapita.peppol.commons.container.state.log.DocumentValidationError
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ContainerMessageHistory implements Serializable {
 
@@ -48,6 +49,10 @@ public class ContainerMessageHistory implements Serializable {
         this.addLog(new DocumentLog(message, DocumentLogLevel.ERROR, DocumentErrorType.PROCESSING_ERROR));
     }
 
+    public void addSendingError(String message) {
+        this.addLog(new DocumentLog(message, DocumentLogLevel.ERROR, DocumentErrorType.SENDING_ERROR));
+    }
+
     public void addValidationError(String message) {
         this.addLog(new DocumentLog(message, DocumentLogLevel.ERROR, DocumentErrorType.VALIDATION_ERROR));
     }
@@ -66,6 +71,22 @@ public class ContainerMessageHistory implements Serializable {
 
     public boolean hasError() {
         return this.logs.stream().anyMatch(DocumentLog::isError);
+    }
+
+    public List<DocumentLog> getErrors() {
+        return this.logs.stream().filter(DocumentLog::isError).collect(Collectors.toList());
+    }
+
+    public List<DocumentLog> getWarnings() {
+        return this.logs.stream().filter(DocumentLog::isWarning).collect(Collectors.toList());
+    }
+
+    public List<DocumentLog> getValidationErrors() {
+        return this.logs.stream().filter(DocumentLog::isValidationError).collect(Collectors.toList());
+    }
+
+    public List<DocumentLog> getValidationWarnings() {
+        return this.logs.stream().filter(log -> log.isWarning() && DocumentErrorType.VALIDATION_ERROR.equals(log.getErrorType())).collect(Collectors.toList());
     }
 
     public DocumentLog getLastLog() {
