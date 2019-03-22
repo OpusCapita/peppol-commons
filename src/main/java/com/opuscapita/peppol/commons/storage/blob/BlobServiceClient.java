@@ -146,7 +146,7 @@ public class BlobServiceClient {
         }
 
         return UriComponentsBuilder
-                .fromUriString(host)
+                .fromUriString("http://" + host)
                 .port(port)
                 .path("/api/" + tenant + "/files" + path)
                 .queryParam("inline", "true")

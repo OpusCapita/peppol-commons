@@ -107,7 +107,7 @@ extraArchive {
     tests = true
 }
 nexusStaging {
-    numberOfRetries = 50
+    numberOfRetries = 99
     delayBetweenRetriesInMillis = 3000
     packageGroup = "com.opuscapita.peppol"
 }

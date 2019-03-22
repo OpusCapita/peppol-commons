@@ -2,9 +2,11 @@ package com.opuscapita.peppol.commons.auth;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.http2.Http2Protocol;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -135,7 +137,7 @@ public class AuthorizationService {
 
     private String getEndpoint(String url) {
         return UriComponentsBuilder
-                .fromUriString(host)
+                .fromUriString("http://" + host)
                 .port(port)
                 .path(url)
                 .toUriString();
