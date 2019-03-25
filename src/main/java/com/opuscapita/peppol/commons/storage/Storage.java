@@ -95,4 +95,13 @@ public interface Storage {
      */
     void remove(String path) throws StorageException;
 
+    /**
+     * Checks if the file is exists in the given path
+     *
+     * @param path the full path of the file ex: "/peppol/hot/20199223/test.xml"
+     * @return true if the file exists
+     * @throws StorageException storage exception
+     */
+    boolean exists(String path) throws StorageException;
+
 }

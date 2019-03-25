@@ -52,16 +52,9 @@ public class AuthorizationService {
     }
 
     public void setAuthorizationHeader(HttpHeaders headers) {
-//        List<String> profiles = new ArrayList<>(Arrays.asList(environment.getActiveProfiles()));
-//        if (profiles.contains("local")) {
-//            headers.set("X-User-Id-Token", getUserIdTokenHeader());
-//        } else {
-//            headers.set("Authorization", getAuthorizationHeader());
-//        }
-
         AuthorizationResponse result = getTokenDetails(username);
         headers.set("X-User-Id-Token", result.getId_token());
-        headers.set("Authorization", result.getAuthorizationHeader());
+//        headers.set("Authorization", result.getAuthorizationHeader());
     }
 
     /**

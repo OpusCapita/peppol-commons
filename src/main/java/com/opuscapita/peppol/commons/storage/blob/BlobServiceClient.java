@@ -100,7 +100,7 @@ public class BlobServiceClient {
         }
     }
 
-    public BlobServiceResponse moveFile(String currentPath, String destinationPath) throws StorageException {
+    public String moveFile(String currentPath, String destinationPath) throws StorageException {
         logger.info("File move requested from blob service for file: " + currentPath + " to folder: " + destinationPath);
         String endpoint = getEndpoint("/move" + currentPath);
         logger.debug("Moving file from endpoint: " + endpoint);
@@ -113,9 +113,9 @@ public class BlobServiceClient {
         logger.debug("Wrapped and set the request body as string");
 
         try {
-            ResponseEntity<BlobServiceResponse> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, BlobServiceResponse.class);
+            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, String.class);
             logger.info("File moved successfully in blob service to path: " + destinationPath);
-            return result.getBody();
+            return destinationPath;
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to move the file in blob service", e);
         }
@@ -133,10 +133,29 @@ public class BlobServiceClient {
         logger.debug("Wrapped and set the request body as string");
 
         try {
-            restTemplate.exchange(endpoint, HttpMethod.DELETE, entity, Object[].class);
+            restTemplate.exchange(endpoint, HttpMethod.DELETE, entity, Void.class);
             logger.info("File(s) removed successfully from blob service for path: " + path);
         } catch (Exception e) {
-            throw new StorageException("Error occurred while trying to move the file in blob service", e);
+            throw new StorageException("Error occurred while trying to remove the file in blob service", e);
+        }
+    }
+
+    public boolean isExists(String path) throws StorageException {
+        logger.info("File exists check requested from blob service for path: " + path);
+        String endpoint = getEndpoint(path);
+        logger.debug("Checking file at endpoint: " + endpoint);
+
+        HttpHeaders headers = new HttpHeaders();
+        authService.setAuthorizationHeader(headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>("", headers);
+        logger.debug("Wrapped and set the request body as string");
+
+        try {
+            ResponseEntity<BlobServiceResponse> result = restTemplate.exchange(endpoint, HttpMethod.HEAD, entity, BlobServiceResponse.class);
+            return path.equals(result.getBody().getPath());
+        } catch (Exception e) {
+            return false;
         }
     }
 

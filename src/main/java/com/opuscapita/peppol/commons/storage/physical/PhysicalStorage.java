@@ -63,7 +63,8 @@ public class PhysicalStorage implements Storage {
     }
 
     private String putFile(InputStream content, String path) throws StorageException {
-        File file = new File(path);
+        String uniq = StorageUtils.uniqueifyFilename(path, this);
+        File file = new File(uniq);
         try {
             FileUtils.copyInputStreamToFile(content, file);
             return file.getAbsolutePath();
@@ -90,11 +91,12 @@ public class PhysicalStorage implements Storage {
     }
 
     private String moveFile(String currentPath, String destinationPath) throws StorageException {
-        File src = new File(currentPath);
-        File dst = new File(destinationPath, src.getName());
+        File source = new File(currentPath);
+        String uniq = StorageUtils.uniqueifyFilename(destinationPath + source.getName(), this);
+        File dest = new File(uniq);
         try {
-            FileUtils.moveFile(src, dst);
-            return dst.getAbsolutePath();
+            FileUtils.moveFile(source, dest);
+            return dest.getAbsolutePath();
         } catch (IOException e) {
             throw new StorageException(e);
         }
@@ -107,4 +109,10 @@ public class PhysicalStorage implements Storage {
             throw new StorageException("Error occurred while removing the file: " + path);
         }
     }
+
+    @Override
+    public boolean exists(String path) throws StorageException {
+        return new File(path).exists();
+    }
+
 }
