@@ -29,7 +29,7 @@ public class StorageUtils {
             return path;
         }
 
-        String pathName = FilenameUtils.getPath(path);
+        String pathName = FilenameUtils.getFullPath(path);
         String filename = FilenameUtils.getName(path);
         String basename = FilenameUtils.getBaseName(filename);
         String extension = FilenameUtils.getExtension(filename);

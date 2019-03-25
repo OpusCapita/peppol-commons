@@ -40,7 +40,7 @@ public class CommonMessageProcessor implements ContainerMessageProcessor {
     @Override
     public void process(@NotNull ContainerMessage cm) {
         try {
-            logger.info("Processing message: " + cm.toKibana());
+            logger.debug("Processing message: " + cm.toKibana());
             containerMessageConsumer.consume(cm);
         } catch (Exception e) {
             reportError(cm, e);

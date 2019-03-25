@@ -44,10 +44,10 @@ public class BlobServiceClient {
     }
 
     public List<BlobServiceResponse> listFolder(String folder) throws StorageException {
-        logger.info("File list requested from blob service for folder: " + folder);
+        logger.debug("File list requested from blob service for folder: " + folder);
         try {
             ResponseEntity<BlobServiceResponse[]> result = get(folder, BlobServiceResponse[].class);
-            logger.info("File list fetched successfully from blob service for folder: " + folder);
+            logger.debug("File list fetched successfully from blob service for folder: " + folder);
             return new ArrayList<>(Arrays.asList(result.getBody()));
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to read the file list from blob service.", e);
@@ -55,10 +55,10 @@ public class BlobServiceClient {
     }
 
     public InputStream getFile(String path) throws StorageException {
-        logger.info("File requested from blob service for path: " + path);
+        logger.debug("File requested from blob service for path: " + path);
         try {
             ResponseEntity<String> result = get(path, String.class);
-            logger.info("File fetched successfully from blob service for path: " + path);
+            logger.debug("File fetched successfully from blob service for path: " + path);
             return new ByteArrayInputStream(result.getBody().getBytes());
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to read the file from blob service.", e);
@@ -80,7 +80,7 @@ public class BlobServiceClient {
     }
 
     public BlobServiceResponse putFile(InputStream data, String path) throws StorageException {
-        logger.info("File storage requested from blob service to path: " + path);
+        logger.debug("File storage requested from blob service to path: " + path);
         String endpoint = getEndpoint(path);
         logger.debug("Putting file to endpoint: " + endpoint);
 
@@ -93,7 +93,7 @@ public class BlobServiceClient {
 
         try {
             ResponseEntity<BlobServiceResponse> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, BlobServiceResponse.class);
-            logger.info("File stored successfully to blob service path: " + path);
+            logger.debug("File stored successfully to blob service path: " + path);
             return result.getBody();
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to put the file to blob service", e);
@@ -101,7 +101,7 @@ public class BlobServiceClient {
     }
 
     public String moveFile(String currentPath, String destinationPath) throws StorageException {
-        logger.info("File move requested from blob service for file: " + currentPath + " to folder: " + destinationPath);
+        logger.debug("File move requested from blob service for file: " + currentPath + " to folder: " + destinationPath);
         String endpoint = getEndpoint("/move" + currentPath);
         logger.debug("Moving file from endpoint: " + endpoint);
 
@@ -113,8 +113,8 @@ public class BlobServiceClient {
         logger.debug("Wrapped and set the request body as string");
 
         try {
-            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, String.class);
-            logger.info("File moved successfully in blob service to path: " + destinationPath);
+            restTemplate.exchange(endpoint, HttpMethod.PUT, entity, String.class);
+            logger.debug("File moved successfully in blob service to path: " + destinationPath);
             return destinationPath;
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to move the file in blob service", e);
@@ -122,7 +122,7 @@ public class BlobServiceClient {
     }
 
     public void remove(String path) throws StorageException {
-        logger.info("File remove requested from blob service for path: " + path);
+        logger.debug("File remove requested from blob service for path: " + path);
         String endpoint = getEndpoint(path);
         logger.debug("Removing file from endpoint: " + endpoint);
 
@@ -134,14 +134,14 @@ public class BlobServiceClient {
 
         try {
             restTemplate.exchange(endpoint, HttpMethod.DELETE, entity, Void.class);
-            logger.info("File(s) removed successfully from blob service for path: " + path);
+            logger.debug("File(s) removed successfully from blob service for path: " + path);
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to remove the file in blob service", e);
         }
     }
 
     public boolean isExists(String path) throws StorageException {
-        logger.info("File exists check requested from blob service for path: " + path);
+        logger.debug("File exists check requested from blob service for path: " + path);
         String endpoint = getEndpoint(path);
         logger.debug("Checking file at endpoint: " + endpoint);
 
@@ -152,8 +152,10 @@ public class BlobServiceClient {
         logger.debug("Wrapped and set the request body as string");
 
         try {
-            ResponseEntity<BlobServiceResponse> result = restTemplate.exchange(endpoint, HttpMethod.HEAD, entity, BlobServiceResponse.class);
-            return path.equals(result.getBody().getPath());
+            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.HEAD, entity, String.class);
+            Boolean exists = (result.getStatusCodeValue() >= 200 && result.getStatusCodeValue() < 300);
+            logger.debug("File in the blob service does " + (exists ? "" : "not") + " exist in the path: " + path);
+            return exists;
         } catch (Exception e) {
             return false;
         }

@@ -2,17 +2,14 @@ package com.opuscapita.peppol.commons.auth;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.coyote.http2.Http2Protocol;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,11 +39,9 @@ public class AuthorizationService {
     @Value("${peppol.auth.port}")
     private String port;
 
-    private Environment environment;
     private RestTemplate restTemplate;
 
-    public AuthorizationService(Environment environment, RestTemplateBuilder restTemplateBuilder) {
-        this.environment = environment;
+    public AuthorizationService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
@@ -74,6 +68,7 @@ public class AuthorizationService {
      * Fetches the id_token from the auth service
      * <p>
      * Note that this is only for direct accesses skipping kong.
+     *
      * @return X-User-Id-Token
      */
     public String getUserIdTokenHeader() {
@@ -83,7 +78,7 @@ public class AuthorizationService {
 
     @Cacheable("authorization")
     public AuthorizationResponse getTokenDetails(String serviceName) {
-        logger.info("Token details requested from auth service");
+        logger.debug("Token details requested from auth service");
         checkRequiredConfigParameters(serviceName);
 
         String endpoint = getEndpoint("/auth/token");
@@ -104,7 +99,7 @@ public class AuthorizationService {
 
         try {
             ResponseEntity<AuthorizationResponse> result = restTemplate.exchange(endpoint, HttpMethod.POST, entity, AuthorizationResponse.class);
-            logger.info("Token details fetched successfully from auth service");
+            logger.debug("Token details fetched successfully from auth service");
             return result.getBody();
         } catch (Exception e) {
             throw new AuthServiceException(e.getMessage());
