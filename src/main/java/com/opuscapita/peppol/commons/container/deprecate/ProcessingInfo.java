@@ -1,8 +1,8 @@
 package com.opuscapita.peppol.commons.container.deprecate;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
 import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
+import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
 import com.opuscapita.peppol.commons.container.state.Endpoint;
 import com.opuscapita.peppol.commons.container.state.Route;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +88,7 @@ public class ProcessingInfo implements Serializable {
     @NotNull
     public String getOriginalSource() {
         if (StringUtils.isBlank(originalSource)) {
-            return source.getSource();
+            return source.getSource().name();
         }
         return originalSource;
     }

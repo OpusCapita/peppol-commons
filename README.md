@@ -53,6 +53,6 @@ If you want to test your changes locally, you can publish to your local reposito
 ### Versioning
 The version number has 3 parts: `[major].[minor].[patch]`. 
 
-The major and minor version numbers are being fetched from the [VERSION](VERSION) file. If you want to release a new major or minor version, edit the VERSION file and push it to master.
+During circleci build process, the latest git tag is fetched. The patch version is increased by one and pushed back to git as a new tag.
 
-The patch version number is auto generated using git tags. Every release from master tagged with the version number which has 1 more patch number from the previous one.
+To update major version, you need to create a new git tag manually, and also release it from your local..again manually.

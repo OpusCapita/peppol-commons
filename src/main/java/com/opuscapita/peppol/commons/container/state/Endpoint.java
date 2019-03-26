@@ -12,23 +12,23 @@ public class Endpoint implements Serializable {
 
     private static final long serialVersionUID = -8305356325208895381L;
 
-    public static final Endpoint TEST = new Endpoint("test", ProcessFlow.IN, ProcessStep.TEST);
+    public static final Endpoint TEST = new Endpoint(Source.UNKNOWN, ProcessFlow.IN, ProcessStep.TEST);
 
-    @Since(1.0) private final String source;
+    @Since(1.0) private final Source source;
     @Since(1.0) private final ProcessFlow flow;
     @Since(1.0) private ProcessStep step;
 
-    public Endpoint(String source, ProcessFlow flow) {
+    public Endpoint(Source source, ProcessFlow flow) {
         this(source, flow, ProcessStep.UNKNOWN);
     }
 
-    public Endpoint(String source, ProcessFlow flow, ProcessStep step) {
+    public Endpoint(Source source, ProcessFlow flow, ProcessStep step) {
         this.flow = flow;
         this.source = source;
         this.step = step;
     }
 
-    public String getSource() {
+    public Source getSource() {
         return source;
     }
 
