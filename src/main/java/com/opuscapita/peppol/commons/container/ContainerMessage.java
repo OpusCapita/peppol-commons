@@ -59,13 +59,6 @@ public class ContainerMessage implements Serializable {
         this.route = route;
     }
 
-    public String popRoute() {
-        if (getRoute() == null) {
-            return null;
-        }
-        return getRoute().pop();
-    }
-
     public ContainerMessageHistory getHistory() {
         return history;
     }

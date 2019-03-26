@@ -3,34 +3,29 @@ package com.opuscapita.peppol.commons.container.state;
 import com.google.gson.annotations.Since;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Route implements Serializable {
 
     private static final long serialVersionUID = -9123055794300438134L;
 
-    @Since(1.0) private String description;
     @Since(1.0) private String mask;
     @Since(1.0) private String source;
+    @Since(1.0) private String destination;
+    @Since(1.0) private String description;
+    @Since(1.0) private int retry = 0;
+    @Since(1.0) private int delay = 0;
     @Since(1.0) private int current = 0;
-    @Since(1.0) private List<String> endpoints = new ArrayList<>();
 
     public Route() {
     }
 
     public Route(Route other) {
-        this.endpoints = other.getEndpoints();
+        this.destination = other.getDestination();
         this.description = other.getDescription();
         this.mask = other.getMask();
         this.source = other.getSource();
-    }
-
-    public String pop() {
-        if (current >= endpoints.size()) {
-            return null;
-        }
-        return endpoints.get(current++);
+        this.retry = other.getRetry();
+        this.delay = other.getDelay();
     }
 
     public String getDescription() {
@@ -57,12 +52,32 @@ public class Route implements Serializable {
         this.source = source;
     }
 
-    public List<String> getEndpoints() {
-        return endpoints;
+    public String getDestination() {
+        return destination;
     }
 
-    public void setEndpoints(List<String> endpoints) {
-        this.endpoints = endpoints;
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public int getRetry() {
+        return retry;
+    }
+
+    public void setRetry(int retry) {
+        this.retry = retry;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public int incrementAndGetCurrent() {
+        return ++current;
     }
 
     @Override
@@ -72,9 +87,7 @@ public class Route implements Serializable {
             result.append(" (").append(mask).append(") ");
         }
         result.append("[ ").append(source).append(" ");
-        for (String endpoint : endpoints) {
-            result.append(endpoint).append(" ");
-        }
+        result.append(destination);
         return result + "]";
     }
 
