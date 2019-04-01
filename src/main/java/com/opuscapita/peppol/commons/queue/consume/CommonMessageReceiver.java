@@ -72,7 +72,7 @@ public class CommonMessageReceiver {
             logger.error("Deserialization failed for message: '" + message + "', ERROR: " + e.getMessage());
             logger.error("Reporting to SNC failed", weird);
         }
-        logger.info("Container message is unavailable, cannot report to eventing");
+        logger.info("Container message is unavailable, cannot report to monitoring");
         throw new AmqpRejectAndDontRequeueException("Deserialization failed", e);
     }
 

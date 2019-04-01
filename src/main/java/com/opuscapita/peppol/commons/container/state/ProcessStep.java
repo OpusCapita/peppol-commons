@@ -2,12 +2,11 @@ package com.opuscapita.peppol.commons.container.state;
 
 public enum ProcessStep {
     INBOUND,
-    PREPROCESS,
+    PROCESS,
     ROUTING,
     VALIDATION,
     OUTBOUND,
-    FILE_TO_MQ,
-    MQ_TO_FILE,
+    NETWORK,
     REPROCESS,
 
     WEB,

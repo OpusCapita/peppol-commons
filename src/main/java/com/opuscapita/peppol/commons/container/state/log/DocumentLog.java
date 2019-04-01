@@ -9,6 +9,7 @@ public class DocumentLog implements Serializable {
 
     private static final long serialVersionUID = -4776734668982849414L;
 
+    @Since(1.0) private long time;
     @Since(1.0) private String message;
     @Since(1.0) private Boolean isPersisted;
     @Since(1.0) private DocumentLogLevel level;
@@ -21,11 +22,20 @@ public class DocumentLog implements Serializable {
         this.level = level;
         this.message = message;
         this.isPersisted = false;
+        this.time = System.currentTimeMillis();
     }
 
     public DocumentLog(String message, DocumentLogLevel level, DocumentErrorType errorType) {
         this(message, level);
         this.errorType = errorType;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public String getMessage() {

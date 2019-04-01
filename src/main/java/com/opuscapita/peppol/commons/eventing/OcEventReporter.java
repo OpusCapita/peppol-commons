@@ -13,7 +13,7 @@ public class OcEventReporter implements EventReporter {
 
     private static final Logger logger = LoggerFactory.getLogger(OcEventReporter.class);
 
-    @Value("${peppol.eventing.queue.in.name:eventing}")
+    @Value("${peppol.monitor.queue.in.name:peppol.message.monitor}")
     private String reportDestination;
 
     private final MessageQueue messageQueue;
