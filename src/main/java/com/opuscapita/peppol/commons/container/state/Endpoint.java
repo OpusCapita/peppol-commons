@@ -53,7 +53,7 @@ public class Endpoint implements Serializable {
     }
 
     public boolean isTerminal() {
-        return ProcessStep.OUTBOUND.equals(step) || ProcessStep.MQ_TO_FILE.equals(step);
+        return ProcessStep.NETWORK.equals(step);
     }
 
     @Override
