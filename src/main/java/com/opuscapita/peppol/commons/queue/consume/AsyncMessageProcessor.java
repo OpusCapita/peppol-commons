@@ -51,8 +51,6 @@ public class AsyncMessageProcessor implements ContainerMessageProcessor {
             reportError(cm, e);
             throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);
         }
-
-        eventReporter.reportStatus(cm);
     }
 
     private void reportError(ContainerMessage cm, Throwable e) {
