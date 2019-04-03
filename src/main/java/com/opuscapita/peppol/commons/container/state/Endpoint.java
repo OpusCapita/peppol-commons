@@ -12,20 +12,18 @@ public class Endpoint implements Serializable {
 
     private static final long serialVersionUID = -8305356325208895381L;
 
-    public static final Endpoint TEST = new Endpoint(Source.UNKNOWN, ProcessFlow.IN, ProcessStep.TEST);
+    public static final Endpoint TEST = new Endpoint(Source.UNKNOWN, ProcessStep.TEST);
 
     @Since(1.0) private final Source source;
-    @Since(1.0) private final ProcessFlow flow;
     @Since(1.0) private ProcessStep step;
 
-    public Endpoint(Source source, ProcessFlow flow) {
-        this(source, flow, ProcessStep.UNKNOWN);
+    public Endpoint(Source source) {
+        this(source, ProcessStep.UNKNOWN);
     }
 
-    public Endpoint(Source source, ProcessFlow flow, ProcessStep step) {
-        this.flow = flow;
-        this.source = source;
+    public Endpoint(Source source, ProcessStep step) {
         this.step = step;
+        this.source = source;
     }
 
     public Source getSource() {
@@ -33,7 +31,7 @@ public class Endpoint implements Serializable {
     }
 
     public ProcessFlow getFlow() {
-        return flow;
+        return Source.NETWORK.equals(source) ? ProcessFlow.IN : ProcessFlow.OUT;
     }
 
     public ProcessStep getStep() {
@@ -41,7 +39,7 @@ public class Endpoint implements Serializable {
     }
 
     public String getStepWithFlow() {
-        return flow.name() + "_" + step.name();
+        return getFlow().name() + "_" + step.name();
     }
 
     public void setStep(ProcessStep step) {
@@ -49,7 +47,7 @@ public class Endpoint implements Serializable {
     }
 
     public boolean isInbound() {
-        return ProcessFlow.IN.equals(flow);
+        return Source.NETWORK.equals(source);
     }
 
     public boolean isTerminal() {
@@ -62,20 +60,19 @@ public class Endpoint implements Serializable {
         if (!(o instanceof Endpoint)) return false;
 
         Endpoint endpoint = (Endpoint) o;
-        return source.equals(endpoint.source) && step.equals(endpoint.step) && flow.equals(endpoint.flow);
+        return source.equals(endpoint.source) && step.equals(endpoint.step);
     }
 
     @Override
     public int hashCode() {
         int result = source.hashCode();
         result = 31 * result + step.hashCode();
-        result = 31 * result + flow.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "Service " + step + " (direction:" + flow + ")";
+        return "Service " + step + " (source:" + source + ")";
     }
 
 }
