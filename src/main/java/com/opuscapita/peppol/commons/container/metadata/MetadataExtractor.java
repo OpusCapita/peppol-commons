@@ -1,11 +1,8 @@
 package com.opuscapita.peppol.commons.container.metadata;
 
-import no.difi.oxalis.api.lang.OxalisContentException;
+import com.opuscapita.peppol.commons.container.metadata.parser.DocumentHeaderParser;
 import no.difi.vefa.peppol.common.model.Header;
 import no.difi.vefa.peppol.sbdh.SbdReader;
-import no.difi.vefa.peppol.sbdh.lang.SbdhException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,36 +18,31 @@ public class MetadataExtractor {
     private final DocumentHeaderParser headerParser;
 
     @Autowired
-    public MetadataExtractor(@Nullable DocumentHeaderParser headerParser) {
+    public MetadataExtractor(DocumentHeaderParser headerParser) {
         this.headerParser = headerParser;
     }
 
-    public PeppolMessageMetadata extract(@NotNull InputStream content) throws Exception {
+    public ContainerMessageMetadata extract(InputStream content) {
         try {
             Header header = SbdReader.newInstance(content).getHeader();
             if (header == null) {
-                throw new SbdhException("Could not extract SBD header, file might not be wrapped.");
-            }
-
-            return PeppolMessageMetadata.create(new OcTransmissionResult(header));
-
-        } catch (Exception exception) {
-            if (exception instanceof SbdhException) {
-                logger.debug(exception.getMessage());
                 return extractFromPayload(content);
             }
-            throw exception;
+            return ContainerMessageMetadata.create(new OcTransmissionResult(header));
+
+        } catch (Exception e) {
+            logger.error("MetadataExtractor encountered exception: " + e.getMessage(), e);
+            return null;
         }
     }
 
 
-    private PeppolMessageMetadata extractFromPayload(@NotNull InputStream payload) throws Exception {
+    private ContainerMessageMetadata extractFromPayload(InputStream payload) throws Exception {
         Header header = headerParser.parse(payload);
         if (header == null) {
-            throw new OxalisContentException("Could not extract metadata from payload.");
+            return null;
         }
-
-        return PeppolMessageMetadata.create(new OcTransmissionResult(header));
+        return ContainerMessageMetadata.create(new OcTransmissionResult(header));
     }
 
 }

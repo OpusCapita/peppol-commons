@@ -2,13 +2,12 @@ package com.opuscapita.peppol.commons.container;
 
 import com.google.gson.annotations.Since;
 import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
-import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
-import com.opuscapita.peppol.commons.container.state.Endpoint;
+import com.opuscapita.peppol.commons.container.metadata.ContainerMessageMetadata;
+import com.opuscapita.peppol.commons.container.state.ProcessFlow;
 import com.opuscapita.peppol.commons.container.state.ProcessStep;
 import com.opuscapita.peppol.commons.container.state.Route;
+import com.opuscapita.peppol.commons.container.state.Source;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -17,19 +16,24 @@ public class ContainerMessage implements Serializable {
     private static final long serialVersionUID = -5450780856722626102L;
 
     @Since(1.0) private String fileName;
-    @Since(1.0) private String originalFileName = "";
 
     @Since(1.0) private Route route;
-    @Since(1.0) private PeppolMessageMetadata metadata;
+    @Since(1.0) private Source source;
     @Since(1.0) private ContainerMessageHistory history;
+    @Since(1.0) private ContainerMessageMetadata metadata;
 
-    public ContainerMessage() {
-        this.history = new ContainerMessageHistory(Endpoint.TEST);
+    public ContainerMessage(String fileName) {
+        this(fileName, Source.UNKNOWN);
     }
 
-    public ContainerMessage(String fileName, Endpoint endpoint) {
+    public ContainerMessage(String fileName, Source source) {
+        this(fileName, source, ProcessStep.UNKNOWN);
+    }
+
+    public ContainerMessage(String fileName, Source source, ProcessStep step) {
         this.fileName = fileName;
-        this.history = new ContainerMessageHistory(endpoint);
+        this.source = source;
+        this.history = new ContainerMessageHistory(step);
     }
 
     public String getFileName() {
@@ -40,17 +44,6 @@ public class ContainerMessage implements Serializable {
         this.fileName = fileName;
     }
 
-    public String getOriginalFileName() {
-        if (StringUtils.isBlank(originalFileName)) {
-            return FilenameUtils.getBaseName(getFileName());
-        }
-        return originalFileName;
-    }
-
-    public void setOriginalFileName(String originalFileName) {
-        this.originalFileName = FilenameUtils.getBaseName(originalFileName);
-    }
-
     public Route getRoute() {
         return route;
     }
@@ -59,31 +52,47 @@ public class ContainerMessage implements Serializable {
         this.route = route;
     }
 
-    public ContainerMessageHistory getHistory() {
-        return history;
+    public Source getSource() {
+        return source;
     }
 
-    public Endpoint getEndpoint() {
-        return history.getEndpoint();
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public ProcessStep getStep() {
+        return getHistory().getStep();
+    }
+
+    public void setStep(ProcessStep step) {
+        this.history.setStep(step);
+    }
+
+    public ProcessFlow getFlow() {
+        return Source.NETWORK.equals(source) ? ProcessFlow.IN : ProcessFlow.OUT;
+    }
+
+    public String getStepWithFlow() {
+        return getFlow().name() + "_" + getStep().name();
     }
 
     public boolean isInbound() {
-        return getEndpoint().isInbound();
+        return Source.NETWORK.equals(source);
     }
 
     public boolean isOutbound() {
         return !this.isInbound();
     }
 
-    public void setStep(ProcessStep step) {
-        this.getEndpoint().setStep(step);
+    public ContainerMessageHistory getHistory() {
+        return history;
     }
 
-    public PeppolMessageMetadata getMetadata() {
+    public ContainerMessageMetadata getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(PeppolMessageMetadata metadata) {
+    public void setMetadata(ContainerMessageMetadata metadata) {
         this.metadata = metadata;
     }
 
@@ -107,8 +116,7 @@ public class ContainerMessage implements Serializable {
 
         DocumentLog log = history.getLastInfoLog();
         result = result.replace("{status}", "{" + (log == null ? "unknown" : log.getMessage()) + "}");
-        Endpoint endpoint = getEndpoint();
-        result = result.replace("{endpoint}", "{" + (endpoint == null ? "unknown" : endpoint.getStepWithFlow()) + "}");
+        result = result.replace("{step}", "{" + getStepWithFlow() + "}");
 
         return result;
     }

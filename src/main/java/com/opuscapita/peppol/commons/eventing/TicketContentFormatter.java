@@ -1,7 +1,7 @@
 package com.opuscapita.peppol.commons.eventing;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
-import com.opuscapita.peppol.commons.container.metadata.PeppolMessageMetadata;
+import com.opuscapita.peppol.commons.container.metadata.ContainerMessageMetadata;
 import com.opuscapita.peppol.commons.container.state.Route;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import org.apache.commons.lang3.StringUtils;
@@ -86,11 +86,11 @@ public class TicketContentFormatter {
 
     static String containerMessageDumb(ContainerMessage cm) {
         Route route = cm.getRoute();
-        PeppolMessageMetadata metadata = cm.getMetadata();
-        return String.format("ContainerMessage{filename: %s, endpoint: {%s}, transmissionId: %s, " +
+        ContainerMessageMetadata metadata = cm.getMetadata();
+        return String.format("ContainerMessage{filename: %s, source: %s, step: %s, transmissionId: %s, " +
                         "senderId: %s, receiverId: %s, sendingAccessPoint: %s, receivingAccessPoint: %s, " +
                         "documentTypeIdentifier: %s, profileTypeIdentifier: %s, protocol: %s, route: %s}",
-                cm.getFileName(), cm.getEndpoint().toString(),
+                cm.getFileName(), cm.getSource(), cm.getStep(),
                 metadata == null ? "null" : metadata.getTransmissionId(),
                 metadata == null ? "null" : metadata.getSenderId(),
                 metadata == null ? "null" : metadata.getRecipientId(),

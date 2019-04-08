@@ -1,7 +1,7 @@
 package com.opuscapita.peppol.commons.container;
 
 import com.google.gson.annotations.Since;
-import com.opuscapita.peppol.commons.container.state.Endpoint;
+import com.opuscapita.peppol.commons.container.state.ProcessStep;
 import com.opuscapita.peppol.commons.container.state.log.DocumentErrorType;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLogLevel;
@@ -16,16 +16,20 @@ public class ContainerMessageHistory implements Serializable {
 
     private static final long serialVersionUID = -9016219790420895460L;
 
-    @Since(1.0) private Endpoint endpoint;
+    @Since(1.0) private ProcessStep step;
     @Since(1.0) private List<DocumentLog> logs;
 
-    ContainerMessageHistory(Endpoint endpoint) {
-        this.endpoint = endpoint;
+    ContainerMessageHistory(ProcessStep step) {
+        this.step = step;
         this.logs = new ArrayList<>();
     }
 
-    public Endpoint getEndpoint() {
-        return endpoint;
+    public ProcessStep getStep() {
+        return step;
+    }
+
+    public void setStep(ProcessStep step) {
+        this.step = step;
     }
 
     public List<DocumentLog> getLogs() {
@@ -33,7 +37,7 @@ public class ContainerMessageHistory implements Serializable {
     }
 
     public void addLog(DocumentLog log) {
-        log.setSource(endpoint.getStep());
+        log.setSource(step);
         this.logs.add(log);
     }
 

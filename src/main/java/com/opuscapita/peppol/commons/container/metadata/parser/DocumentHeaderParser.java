@@ -1,10 +1,8 @@
-package com.opuscapita.peppol.commons.container.metadata;
+package com.opuscapita.peppol.commons.container.metadata.parser;
 
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.HardCodedNamespaceResolver;
-import no.difi.oxalis.sniffer.document.PlainUBLHeaderParser;
-import no.difi.oxalis.sniffer.document.parsers.PEPPOLDocumentParser;
 import no.difi.vefa.peppol.common.model.Header;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -19,7 +17,7 @@ import java.io.InputStream;
 
 /**
  * Copied from oxalis "no.difi.oxalis.sniffer.document.NoSbdhParser"
- *
+ * <p>
  * Parses UBL based documents, which are not wrapped within an SBDH
  * extracting data and creating a Header.
  */
@@ -44,8 +42,8 @@ public class DocumentHeaderParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
-     * @throws OxalisContentException invalid file content
      * @return an instance of Header populated with data from the UBL XML document.
+     * @throws OxalisContentException invalid file content
      */
     public Header parse(InputStream inputStream) throws OxalisContentException {
         return originalParse(inputStream).toVefa();
@@ -56,8 +54,8 @@ public class DocumentHeaderParser {
      * should not be wrapped in an SBDH.
      *
      * @param inputStream UBL XML data without an SBDH.
-     * @throws OxalisContentException invalid file content
      * @return an instance of PeppolStandardBusinessHeader populated with data from the UBL XML document.
+     * @throws OxalisContentException invalid file content
      */
     private PeppolStandardBusinessHeader originalParse(InputStream inputStream) throws OxalisContentException {
         try {
@@ -68,43 +66,15 @@ public class DocumentHeaderParser {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(new HardCodedNamespaceResolver());
 
-            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader
-                    .createPeppolStandardBusinessHeaderWithNewDate();
+            PeppolStandardBusinessHeader sbdh = PeppolStandardBusinessHeader.createPeppolStandardBusinessHeaderWithNewDate();
 
-            // use the plain UBL header parser to decode format and create correct document parser
-            PlainUBLHeaderParser headerParser = new PlainUBLHeaderParser(document, xPath);
-
-            // make sure we actually have a UBL type document
-            if (headerParser.canParse()) {
-
-                sbdh.setDocumentTypeIdentifier(headerParser.fetchDocumentTypeId().toVefa());
-                sbdh.setProfileTypeIdentifier(headerParser.fetchProcessTypeId());
-
-                // try to use a specialized document parser to fetch more document details
-                PEPPOLDocumentParser documentParser = null;
-                try {
-                    documentParser = headerParser.createDocumentParser();
-                } catch (Exception ex) {
-                    /*
-                        allow this to happen so that "unknown" PEPPOL documents still
-                        can be used by explicitly setting sender and receiver thru API
-                    */
-                }
-                /* However, if we found an eligible parser, we should be able to determine the sender and receiver */
-                if (documentParser != null) {
-                    try {
-                        sbdh.setSenderId(documentParser.getSender());
-                    } catch (Exception e) {
-                        // Continue with recipient
-                    }
-                    try {
-                        sbdh.setRecipientId(documentParser.getReceiver());
-                    } catch (Exception e) {
-                        // Just continue
-                    }
-                }
+            DocumentPayloadParser parser = new DocumentPayloadParser(document, xPath);
+            if (parser.canParse()) {
+                sbdh.setDocumentTypeIdentifier(parser.fetchDocumentTypeId().toVefa());
+                sbdh.setProfileTypeIdentifier(parser.fetchProcessTypeId());
+                sbdh.setSenderId(parser.getSender());
+                sbdh.setRecipientId(parser.getReceiver());
             }
-
             return sbdh;
         } catch (Exception e) {
             throw new OxalisContentException("Unable to parseOld document " + e.getMessage(), e);

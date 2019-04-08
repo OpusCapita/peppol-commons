@@ -18,25 +18,36 @@ import java.util.Date;
  * Populated from the request Header for inbound files
  * Populated from the SBD Header extracted from the payload for outbound files
  */
-public class PeppolMessageMetadata implements Serializable {
+public class ContainerMessageMetadata implements Serializable {
 
     private static final long serialVersionUID = 2688223858360763842L;
 
     public static final String OC_AP_COMMON_NAME = "C=FI, O=OpusCapita Solutions Oy, OU=PEPPOL PRODUCTION AP, CN=PNO000104";
 
+    /**
+     * Fetched from file: SBDH/DocumentIdentification/InstanceIdentifier
+     * Must be unique for every file
+     */
     @Since(1.0) private String messageId;
+
+    /**
+     * Created during AS2 transmission
+     * For BP endpoints, we create it using randomUUID
+     * Must be unique for every process
+     */
     @Since(1.0) private String transmissionId;
+
     @Since(1.0) private String senderId;
     @Since(1.0) private String recipientId;
-    @Since(1.0) private Date sendersTimeStamp;
-    @Since(1.0) private Date receivedTimeStamp;
     @Since(1.0) private String sendingAccessPoint;
     @Since(1.0) private String receivingAccessPoint;
     @Since(1.0) private String documentTypeIdentifier;
     @Since(1.0) private String profileTypeIdentifier;
+
     @Since(1.0) private String instanceType;
     @Since(1.0) private String instanceTypeVersion;
     @Since(1.0) private String instanceTypeStandard;
+    @Since(1.0) private Date timestamp;
     @Since(1.0) private String protocol;
     @Since(1.0) private String userAgent;
     @Since(1.0) private String userAgentVersion;
@@ -145,20 +156,12 @@ public class PeppolMessageMetadata implements Serializable {
         this.userAgentVersion = userAgentVersion;
     }
 
-    public Date getSendersTimeStamp() {
-        return sendersTimeStamp;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setSendersTimeStamp(Date sendersTimeStamp) {
-        this.sendersTimeStamp = sendersTimeStamp;
-    }
-
-    public Date getReceivedTimeStamp() {
-        return receivedTimeStamp;
-    }
-
-    public void setReceivedTimeStamp(Date receivedTimeStamp) {
-        this.receivedTimeStamp = receivedTimeStamp;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getTransmissionId() {
@@ -169,22 +172,20 @@ public class PeppolMessageMetadata implements Serializable {
         this.transmissionId = transmissionId;
     }
 
-    // Outbound Flow: file coming from business platforms to our transport service (or reprocess)
-    public static PeppolMessageMetadata create(TransmissionResult transmissionResult) {
+    // Outbound Flow: file coming from business platforms (or reprocess)
+    public static ContainerMessageMetadata create(OcTransmissionResult transmissionResult) {
         Header header = transmissionResult.getHeader();
 
-        PeppolMessageMetadata metadata = new PeppolMessageMetadata();
+        ContainerMessageMetadata metadata = new ContainerMessageMetadata();
         metadata.setMessageId(header.getIdentifier().getIdentifier());
+        metadata.setTransmissionId(transmissionResult.getTransmissionIdentifier().getIdentifier());
         metadata.setRecipientId(header.getReceiver() != null ? header.getReceiver().getIdentifier() : null);
         metadata.setSenderId(header.getSender() != null ? header.getSender().getIdentifier() : null);
         metadata.setDocumentTypeIdentifier(header.getDocumentType().getIdentifier());
         metadata.setProfileTypeIdentifier(header.getProcess().getIdentifier());
-//        metadata.setSendingAccessPoint(OC_AP_COMMON_NAME);
-//        metadata.setReceivingAccessPoint(OC_AP_COMMON_NAME);
         metadata.setProtocol(transmissionResult.getProtocol().getIdentifier());
-        metadata.setSendersTimeStamp(transmissionResult.getTimestamp());
-        metadata.setReceivedTimeStamp(new Date());
-        metadata.setTransmissionId(header.getIdentifier().getIdentifier());
+        metadata.setTimestamp(transmissionResult.getTimestamp());
+
         metadata.setInstanceType(header.getInstanceType().getType());
         metadata.setInstanceTypeVersion(header.getInstanceType().getVersion());
         metadata.setInstanceTypeStandard(header.getInstanceType().getStandard());
@@ -193,13 +194,14 @@ public class PeppolMessageMetadata implements Serializable {
     }
 
     // Inbound Flow: file coming from network to our inbound..
-    public static PeppolMessageMetadata create(InboundMetadata inboundMetadata) {
+    public static ContainerMessageMetadata create(InboundMetadata inboundMetadata) {
         Header header = inboundMetadata.getHeader();
         X509Certificate certificate = inboundMetadata.getCertificate();
         X500Principal principal = certificate.getSubjectX500Principal();
 
-        PeppolMessageMetadata metadata = new PeppolMessageMetadata();
+        ContainerMessageMetadata metadata = new ContainerMessageMetadata();
         metadata.setMessageId(header.getIdentifier().getIdentifier());
+        metadata.setTransmissionId(inboundMetadata.getTransmissionIdentifier().getIdentifier());
         metadata.setRecipientId(header.getReceiver().getIdentifier());
         metadata.setSenderId(header.getSender().getIdentifier());
         metadata.setDocumentTypeIdentifier(header.getDocumentType().getIdentifier());
@@ -207,52 +209,20 @@ public class PeppolMessageMetadata implements Serializable {
         metadata.setSendingAccessPoint(principal.getName());
         metadata.setReceivingAccessPoint(OC_AP_COMMON_NAME);
         metadata.setProtocol(inboundMetadata.getProtocol().getIdentifier());
-        metadata.setSendersTimeStamp(inboundMetadata.getTimestamp());
-        metadata.setReceivedTimeStamp(new Date());
-        metadata.setTransmissionId(header.getIdentifier().getIdentifier());
+        metadata.setTimestamp(inboundMetadata.getTimestamp());
+
         metadata.setInstanceType(header.getInstanceType().getType());
         metadata.setInstanceTypeVersion(header.getInstanceType().getVersion());
         metadata.setInstanceTypeStandard(header.getInstanceType().getStandard());
 
-        return metadata;
-    }
-
-    // Outbound: file delivered to network, metadata update
-    public static PeppolMessageMetadata create(@NotNull TransmissionResponse response) {
-        Header header = response.getHeader();
-        X509Certificate certificate = response.getEndpoint().getCertificate();
-        X500Principal principal = certificate.getSubjectX500Principal();
-
-        PeppolMessageMetadata metadata = new PeppolMessageMetadata();
-        metadata.setMessageId(header.getIdentifier().getIdentifier());
-        metadata.setRecipientId(header.getReceiver().getIdentifier());
-        metadata.setSenderId(header.getSender().getIdentifier());
-        metadata.setDocumentTypeIdentifier(header.getDocumentType().getIdentifier());
-        metadata.setProfileTypeIdentifier(header.getProcess().getIdentifier());
-        metadata.setSendingAccessPoint(OC_AP_COMMON_NAME);
-        metadata.setReceivingAccessPoint(principal.getName());
-        metadata.setProtocol(response.getProtocol().getIdentifier());
-        metadata.setSendersTimeStamp(response.getTimestamp());
-        metadata.setReceivedTimeStamp(new Date());
-        metadata.setTransmissionId(header.getIdentifier().getIdentifier());
-        metadata.setInstanceType(header.getInstanceType().getType());
-        metadata.setInstanceTypeVersion(header.getInstanceType().getVersion());
-        metadata.setInstanceTypeStandard(header.getInstanceType().getStandard());
-
-        return metadata;
-    }
-
-    public static PeppolMessageMetadata create(@NotNull String transmissionId) {
-        PeppolMessageMetadata metadata = new PeppolMessageMetadata();
-        metadata.setTransmissionId(transmissionId);
         return metadata;
     }
 
     // testing purposes
-    public static PeppolMessageMetadata createDummy() {
-        PeppolMessageMetadata metadata = new PeppolMessageMetadata();
+    public static ContainerMessageMetadata createDummy() {
+        ContainerMessageMetadata metadata = new ContainerMessageMetadata();
         metadata.setMessageId("ff3bb2dc-3ff4-11e6-9605-97ed9690fe22");
-        metadata.setTransmissionId("ff3bb2dc-3ff4-11e6-9605-97ed9690fe22");
+        metadata.setTransmissionId("70b6fd04-3ac9-42ea-8d42-86582873453c");
         metadata.setRecipientId("9908:937789416");
         metadata.setSenderId("9908:937270062");
         metadata.setDocumentTypeIdentifier("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0::2.1");
@@ -260,8 +230,7 @@ public class PeppolMessageMetadata implements Serializable {
         metadata.setSendingAccessPoint(OC_AP_COMMON_NAME);
         metadata.setReceivingAccessPoint(OC_AP_COMMON_NAME);
         metadata.setProtocol("AS2");
-        metadata.setSendersTimeStamp(new Date());
-        metadata.setReceivedTimeStamp(new Date());
+        metadata.setTimestamp(new Date());
         metadata.setInstanceType("Invoice");
         metadata.setInstanceTypeVersion("2.1");
         metadata.setInstanceTypeStandard("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
