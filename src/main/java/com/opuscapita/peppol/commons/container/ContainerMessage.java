@@ -7,7 +7,6 @@ import com.opuscapita.peppol.commons.container.state.ProcessFlow;
 import com.opuscapita.peppol.commons.container.state.ProcessStep;
 import com.opuscapita.peppol.commons.container.state.Route;
 import com.opuscapita.peppol.commons.container.state.Source;
-import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 
 import java.io.Serializable;
 
@@ -111,13 +110,10 @@ public class ContainerMessage implements Serializable {
     }
 
     public String toKibana() {
-        String result = "[file: {filename}, status: {status}, endpoint: {endpoint}]";
+        String result = "[file: {filename}, messageId: {messageId}, transmissionId: {transmissionId}]";
         result = result.replace("{filename}", "{" + getFileName() + "}");
-
-        DocumentLog log = history.getLastInfoLog();
-        result = result.replace("{status}", "{" + (log == null ? "unknown" : log.getMessage()) + "}");
-        result = result.replace("{step}", "{" + getStepWithFlow() + "}");
-
+        result = result.replace("{messageId}", "{" + (metadata == null ? "-" : metadata.getMessageId()) + "}");
+        result = result.replace("{transmissionId}", "{" + (metadata == null ? "-" : metadata.getTransmissionId()) + "}");
         return result;
     }
 

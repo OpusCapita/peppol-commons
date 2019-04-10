@@ -25,6 +25,15 @@ public interface Storage {
     List<String> check(String folder) throws StorageException;
 
     /**
+     * Updates file content in the path, with the given content
+     *
+     * @param content  the updated file content as input stream
+     * @param path   the full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
+     * @throws StorageException storage exception
+     */
+    void update(InputStream content, String path) throws StorageException;
+
+    /**
      * Puts file to the given folder, with the given filename
      *
      * @param content  the file content as input stream

@@ -46,6 +46,16 @@ public class PhysicalStorage implements Storage {
     }
 
     @Override
+    public void update(InputStream content, String path) throws StorageException {
+        File file = new File(path);
+        try {
+            FileUtils.copyInputStreamToFile(content, file);
+        } catch (IOException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
     public String putToCustom(InputStream content, String folder, String filename) throws StorageException {
         return putFile(content, folder + filename);
     }

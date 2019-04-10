@@ -39,6 +39,11 @@ public class BlobStorage implements Storage {
     }
 
     @Override
+    public void update(InputStream content, String path) throws StorageException {
+        client.putFile(content, path);
+    }
+
+    @Override
     public String putToCustom(InputStream content, String folder, String filename) throws StorageException {
         String path = StorageUtils.uniqueifyFilename(folder + filename, this);
         return client.putFile(content, path).getPath();
