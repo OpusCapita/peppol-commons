@@ -11,7 +11,6 @@ public class DocumentLog implements Serializable {
 
     @Since(1.0) private long time;
     @Since(1.0) private String message;
-    @Since(1.0) private Boolean isPersisted;
     @Since(1.0) private DocumentLogLevel level;
     @Since(1.0) private DocumentErrorType errorType;
     @Since(1.0) private DocumentValidationError validationError;
@@ -21,7 +20,6 @@ public class DocumentLog implements Serializable {
     public DocumentLog(String message, DocumentLogLevel level) {
         this.level = level;
         this.message = message;
-        this.isPersisted = false;
         this.time = System.currentTimeMillis();
     }
 
@@ -44,14 +42,6 @@ public class DocumentLog implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Boolean isPersisted() {
-        return isPersisted;
-    }
-
-    public void setPersisted(Boolean persisted) {
-        isPersisted = persisted;
     }
 
     public DocumentLogLevel getLevel() {
