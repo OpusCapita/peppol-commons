@@ -26,23 +26,28 @@ public class MetadataExtractor {
         try {
             Header header = SbdReader.newInstance(content).getHeader();
             if (header == null) {
-                return extractFromPayload(content);
+                return null;
             }
             return ContainerMessageMetadata.create(new OcTransmissionResult(header));
 
         } catch (Exception e) {
-            logger.error("MetadataExtractor encountered exception: " + e.getMessage(), e);
+            logger.error("MetadataExtractor encountered exception: " + e.getMessage());
             return null;
         }
     }
 
+    public ContainerMessageMetadata extractFromPayload(InputStream payload) {
+        try {
+            Header header = headerParser.parse(payload);
+            if (header == null) {
+                return null;
+            }
+            return ContainerMessageMetadata.create(new OcTransmissionResult(header));
 
-    private ContainerMessageMetadata extractFromPayload(InputStream payload) throws Exception {
-        Header header = headerParser.parse(payload);
-        if (header == null) {
+        } catch (Exception e) {
+            logger.error("MetadataExtractor encountered exception: " + e.getMessage());
             return null;
         }
-        return ContainerMessageMetadata.create(new OcTransmissionResult(header));
     }
 
 }

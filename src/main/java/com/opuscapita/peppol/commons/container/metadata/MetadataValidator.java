@@ -34,20 +34,30 @@ public class MetadataValidator {
         if (metadata == null) {
             logger.debug("No metadata info found in the message: " + cm.getFileName());
             try {
-                metadata = extractMetadata(cm);
+                metadata = extractMetadataFromHeader(cm);
 
                 if (metadata == null) {
-                    cm.getHistory().addError("Could not extract the header from file");
+                    metadata = extractMetadataFromPayload(cm);
+                }
+
+                if (metadata == null) {
+                    cm.getHistory().addError("Could not extract the metadata from file");
                     return;
                 }
             } catch (Exception e) {
                 logger.error("Could not extract the metadata from file: " + cm.getFileName(), e);
-                cm.getHistory().addError(e.getMessage());
+                cm.getHistory().addError("Could not extract the metadata from file, reason: " + e.getMessage());
                 return;
             }
         }
 
         List<String> missingFields = new ArrayList<>();
+        if (StringUtils.isBlank(metadata.getMessageId())) {
+            missingFields.add("messageId");
+        }
+        if (StringUtils.isBlank(metadata.getTransmissionId())) {
+            missingFields.add("transmissionId");
+        }
         if (StringUtils.isBlank(metadata.getSenderId())) {
             missingFields.add("senderId");
         }
@@ -67,11 +77,17 @@ public class MetadataValidator {
         }
     }
 
-    private ContainerMessageMetadata extractMetadata(@NotNull ContainerMessage cm) throws Exception {
-        logger.debug("I will try to extract metadata from payload");
-
+    private ContainerMessageMetadata extractMetadataFromHeader(@NotNull ContainerMessage cm) throws Exception {
         try (InputStream content = storage.get(cm.getFileName())) {
             ContainerMessageMetadata metadata = metadataExtractor.extract(content);
+            cm.setMetadata(metadata);
+            return metadata;
+        }
+    }
+
+    private ContainerMessageMetadata extractMetadataFromPayload(@NotNull ContainerMessage cm) throws Exception {
+        try (InputStream content = storage.get(cm.getFileName())) {
+            ContainerMessageMetadata metadata = metadataExtractor.extractFromPayload(content);
             cm.setMetadata(metadata);
             return metadata;
         }
