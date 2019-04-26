@@ -114,7 +114,8 @@ public class PhysicalStorage implements Storage {
 
     @Override
     public void remove(String path) throws StorageException {
-        Boolean result = new File(path).delete();
+        File file = new File(path);
+        Boolean result = FileUtils.deleteQuietly(file);
         if (!result) {
             throw new StorageException("Error occurred while removing the file: " + path);
         }
