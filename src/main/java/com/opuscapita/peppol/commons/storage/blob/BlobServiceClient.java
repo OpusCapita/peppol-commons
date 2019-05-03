@@ -5,6 +5,7 @@ import com.opuscapita.peppol.commons.storage.StorageException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.InputStreamResource;
@@ -38,6 +39,7 @@ public class BlobServiceClient {
     private RestTemplate restTemplate;
     private AuthorizationService authService;
 
+    @Autowired
     public BlobServiceClient(AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
         this.authService = authService;
         this.restTemplate = restTemplateBuilder.build();

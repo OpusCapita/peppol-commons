@@ -2,10 +2,7 @@ package com.opuscapita.peppol.commons.container.metadata;
 
 import com.google.gson.annotations.Since;
 import no.difi.oxalis.api.inbound.InboundMetadata;
-import no.difi.oxalis.api.outbound.TransmissionResponse;
-import no.difi.oxalis.api.transmission.TransmissionResult;
 import no.difi.vefa.peppol.common.model.Header;
-import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.Serializable;
@@ -51,6 +48,7 @@ public class ContainerMessageMetadata implements Serializable {
     @Since(1.0) private String protocol;
     @Since(1.0) private String userAgent;
     @Since(1.0) private String userAgentVersion;
+    @Since(1.0) private ContainerValidationRule validationRule;
 
     public String getMessageId() {
         return messageId;
@@ -162,6 +160,14 @@ public class ContainerMessageMetadata implements Serializable {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public ContainerValidationRule getValidationRule() {
+        return validationRule;
+    }
+
+    public void setValidationRule(ContainerValidationRule validationRule) {
+        this.validationRule = validationRule;
     }
 
     public String getTransmissionId() {
