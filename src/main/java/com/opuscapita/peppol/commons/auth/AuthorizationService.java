@@ -7,10 +7,11 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -41,9 +42,12 @@ public class AuthorizationService {
     private String port;
 
     private RestTemplate restTemplate;
+    private EhCacheCacheManager cacheManager;
 
-    public AuthorizationService(RestTemplateBuilder restTemplateBuilder) {
+    @Autowired
+    public AuthorizationService(RestTemplateBuilder restTemplateBuilder, EhCacheCacheManager cacheManager) {
         this.restTemplate = restTemplateBuilder.build();
+        this.cacheManager = cacheManager;
     }
 
     public void setAuthorizationHeader(HttpHeaders headers) {
@@ -77,9 +81,12 @@ public class AuthorizationService {
         return result.getId_token();
     }
 
-    @Cacheable("auth.token")
     public AuthorizationResponse getTokenDetails(String serviceName) {
-        throw new AuthServiceException("Auth token should be fetched from cache: " + serviceName);
+        try {
+            return cacheManager.getCache("auth.token").get(serviceName, AuthorizationResponse.class);
+        } catch (Exception e) {
+            throw new AuthServiceException("Auth token should be fetched from cache: " + serviceName);
+        }
     }
 
     @CachePut("auth.token")
