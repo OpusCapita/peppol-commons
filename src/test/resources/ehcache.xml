@@ -8,4 +8,14 @@
            timeToLiveSeconds="3600"
            maxElementsInMemory="10"
     />
+    <cache name="validation-xsd"
+           eternal="true"
+           overflowToDisk="false"
+           maxElementsInMemory="100"
+    />
+    <cache name="validation-xsl"
+           eternal="true"
+           overflowToDisk="false"
+           maxElementsInMemory="100"
+    />
 </ehcache>
