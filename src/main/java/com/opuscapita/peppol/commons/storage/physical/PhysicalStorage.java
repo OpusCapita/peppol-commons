@@ -35,7 +35,7 @@ public class PhysicalStorage implements Storage {
     }
 
     @Override
-    public List<String> check(String folder) throws StorageException {
+    public List<String> list(String folder) throws StorageException {
         try {
             File[] files = new File(folder).listFiles();
             List<File> list = new ArrayList<>(Arrays.asList(files));
@@ -56,24 +56,8 @@ public class PhysicalStorage implements Storage {
     }
 
     @Override
-    public String putToCustom(InputStream content, String folder, String filename) throws StorageException {
-        return putFile(content, folder + filename);
-    }
-
-    @Override
-    public String putToTemporary(InputStream content, String filename) throws StorageException {
-        String path = StorageUtils.createDailyPath(hotFolder, filename);
-        return putFile(content, path);
-    }
-
-    @Override
-    public String putToPermanent(InputStream content, String filename, String senderId, String receiverId) throws StorageException {
-        String path = StorageUtils.createUserPath(coldFolder, filename, senderId, receiverId);
-        return putFile(content, path);
-    }
-
-    private String putFile(InputStream content, String path) throws StorageException {
-        String uniq = StorageUtils.uniqueifyFilename(path, this);
+    public String put(InputStream content, String folder, String filename) throws StorageException {
+        String uniq = StorageUtils.uniqueifyFilename(folder + filename, this);
         File file = new File(uniq);
         try {
             FileUtils.copyInputStreamToFile(content, file);
@@ -84,25 +68,9 @@ public class PhysicalStorage implements Storage {
     }
 
     @Override
-    public String moveToCustom(String path, String folder) throws StorageException {
-        return moveFile(path, folder);
-    }
-
-    @Override
-    public String moveToTemporary(String path) throws StorageException {
-        String folder = StorageUtils.createDailyPath(hotFolder, "");
-        return moveFile(path, folder);
-    }
-
-    @Override
-    public String moveToPermanent(String path, String senderId, String receiverId) throws StorageException {
-        String folder = StorageUtils.createUserPath(coldFolder, "", senderId, receiverId);
-        return moveFile(path, folder);
-    }
-
-    private String moveFile(String currentPath, String destinationPath) throws StorageException {
-        File source = new File(currentPath);
-        String uniq = StorageUtils.uniqueifyFilename(destinationPath + source.getName(), this);
+    public String move(String path, String folder) throws StorageException {
+        File source = new File(path);
+        String uniq = StorageUtils.uniqueifyFilename(folder + source.getName(), this);
         File dest = new File(uniq);
         try {
             FileUtils.moveFile(source, dest);
@@ -125,5 +93,4 @@ public class PhysicalStorage implements Storage {
     public boolean exists(String path) throws StorageException {
         return new File(path).exists();
     }
-
 }

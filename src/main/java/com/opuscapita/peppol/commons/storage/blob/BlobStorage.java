@@ -34,7 +34,7 @@ public class BlobStorage implements Storage {
     }
 
     @Override
-    public List<String> check(String folder) throws StorageException {
+    public List<String> list(String folder) throws StorageException {
         return client.listFolder(folder).stream().map(BlobServiceResponse::getPath).collect(Collectors.toList());
     }
 
@@ -44,42 +44,14 @@ public class BlobStorage implements Storage {
     }
 
     @Override
-    public String putToCustom(InputStream content, String folder, String filename) throws StorageException {
+    public String put(InputStream content, String folder, String filename) throws StorageException {
         String path = StorageUtils.uniqueifyFilename(folder + filename, this);
         return client.putFile(content, path).getPath();
     }
 
     @Override
-    public String putToTemporary(InputStream content, String filename) throws StorageException {
-        String path = StorageUtils.createDailyPath(hotFolder, filename);
-        String uniq = StorageUtils.uniqueifyFilename(path, this);
-        return client.putFile(content, uniq).getPath();
-    }
-
-    @Override
-    public String putToPermanent(InputStream content, String filename, String senderId, String receiverId) throws StorageException {
-        String path = StorageUtils.createUserPath(coldFolder, filename, senderId, receiverId);
-        String uniq = StorageUtils.uniqueifyFilename(path, this);
-        return client.putFile(content, uniq).getPath();
-    }
-
-    @Override
-    public String moveToCustom(String path, String folder) throws StorageException {
+    public String move(String path, String folder) throws StorageException {
         String dest = folder + FilenameUtils.getName(path);
-        String uniq = StorageUtils.uniqueifyFilename(dest, this);
-        return client.moveFile(path, uniq);
-    }
-
-    @Override
-    public String moveToTemporary(String path) throws StorageException {
-        String dest = StorageUtils.createDailyPath(hotFolder, FilenameUtils.getName(path));
-        String uniq = StorageUtils.uniqueifyFilename(dest, this);
-        return client.moveFile(path, uniq);
-    }
-
-    @Override
-    public String moveToPermanent(String path, String senderId, String receiverId) throws StorageException {
-        String dest = StorageUtils.createUserPath(coldFolder, FilenameUtils.getName(path), senderId, receiverId);
         String uniq = StorageUtils.uniqueifyFilename(dest, this);
         return client.moveFile(path, uniq);
     }
@@ -94,4 +66,31 @@ public class BlobStorage implements Storage {
         return client.isExists(path);
     }
 
+    @Deprecated
+    public String putToTemporary(InputStream content, String filename) throws StorageException {
+        String path = StorageUtils.createDailyPath(hotFolder, filename);
+        String uniq = StorageUtils.uniqueifyFilename(path, this);
+        return client.putFile(content, uniq).getPath();
+    }
+
+    @Deprecated
+    public String putToPermanent(InputStream content, String filename, String senderId, String receiverId) throws StorageException {
+        String path = StorageUtils.createUserPath(coldFolder, filename, senderId, receiverId);
+        String uniq = StorageUtils.uniqueifyFilename(path, this);
+        return client.putFile(content, uniq).getPath();
+    }
+
+    @Deprecated
+    public String moveToTemporary(String path) throws StorageException {
+        String dest = StorageUtils.createDailyPath(hotFolder, FilenameUtils.getName(path));
+        String uniq = StorageUtils.uniqueifyFilename(dest, this);
+        return client.moveFile(path, uniq);
+    }
+
+    @Deprecated
+    public String moveToPermanent(String path, String senderId, String receiverId) throws StorageException {
+        String dest = StorageUtils.createUserPath(coldFolder, FilenameUtils.getName(path), senderId, receiverId);
+        String uniq = StorageUtils.uniqueifyFilename(dest, this);
+        return client.moveFile(path, uniq);
+    }
 }

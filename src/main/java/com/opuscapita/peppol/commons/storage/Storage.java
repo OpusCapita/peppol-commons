@@ -18,11 +18,11 @@ public interface Storage {
     /**
      * Checks the folder and returns the full path of the files in that folder as a string list
      *
-     * @param folder the folder name to check, has to end with a slash ex: "/peppol/in/a2a/"
+     * @param folder the folder name to list, has to end with a slash ex: "/peppol/in/a2a/"
      * @return path list
      * @throws StorageException storage exception
      */
-    List<String> check(String folder) throws StorageException;
+    List<String> list(String folder) throws StorageException;
 
     /**
      * Updates file content in the path, with the given content
@@ -42,29 +42,7 @@ public interface Storage {
      * @return the final full path of the file ex: "/peppol/in/xib/test.xml"
      * @throws StorageException storage exception
      */
-    String putToCustom(InputStream content, String folder, String filename) throws StorageException;
-
-    /**
-     * Puts file to the short-term storage folder, with the given filename
-     *
-     * @param content  the file content as input stream
-     * @param filename the filename ex: "test.xml"
-     * @return the final full path of the file ex: "/peppol/hot/20199223/test.xml"
-     * @throws StorageException storage exception
-     */
-    String putToTemporary(InputStream content, String filename) throws StorageException;
-
-    /**
-     * Puts file to the long-term storage folder, with the given filename
-     *
-     * @param content    the file content as input stream
-     * @param filename   the filename ex: "test.xml"
-     * @param senderId   the participant id of the sender
-     * @param receiverId the participant id of the receiver
-     * @return the final full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
-     * @throws StorageException storage exception
-     */
-    String putToPermanent(InputStream content, String filename, String senderId, String receiverId) throws StorageException;
+    String put(InputStream content, String folder, String filename) throws StorageException;
 
     /**
      * Moves file to the given folder
@@ -74,27 +52,7 @@ public interface Storage {
      * @return the final full path of the file ex: "/peppol/out/xib/test.xml"
      * @throws StorageException storage exception
      */
-    String moveToCustom(String path, String folder) throws StorageException;
-
-    /**
-     * Moves file to the short-term storage folder
-     *
-     * @param path the current full path of the file ex: "/peppol/in/a2a/test.xml"
-     * @return the final full path of the file ex: "/peppol/hot/20199223/test.xml"
-     * @throws StorageException storage exception
-     */
-    String moveToTemporary(String path) throws StorageException;
-
-    /**
-     * Moves file to the long-term storage folder
-     *
-     * @param path       the current full path of the file ex: "/peppol/hot/20199223/test.xml"
-     * @param senderId   the participant id of the sender
-     * @param receiverId the participant id of the receiver
-     * @return the final full path of the file ex: "/peppol/cold/9908_987987987/0007_232100032/20199223/test.xml"
-     * @throws StorageException storage exception
-     */
-    String moveToPermanent(String path, String senderId, String receiverId) throws StorageException;
+    String move(String path, String folder) throws StorageException;
 
     /**
      * Removes a file or a directory, note that if a directory is passed as parameter, it deletes recursively

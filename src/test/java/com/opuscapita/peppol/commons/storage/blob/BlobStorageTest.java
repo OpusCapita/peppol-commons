@@ -39,21 +39,21 @@ public class BlobStorageTest {
         String filename = "test1.xml";
 
         InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-        String putResponse = storage.putToCustom(inputStream, folder, filename);
+        String putResponse = storage.put(inputStream, folder, filename);
         assertEquals(folder + filename, putResponse);
 
-        String moveResponse = storage.moveToCustom(putResponse, destFolder);
+        String moveResponse = storage.move(putResponse, destFolder);
         assertEquals(destFolder + filename, moveResponse);
 
-        List<String> listResponse1 = storage.check(folder);
+        List<String> listResponse1 = storage.list(folder);
         assertTrue(listResponse1.isEmpty());
 
-        List<String> listResponse2 = storage.check(destFolder);
+        List<String> listResponse2 = storage.list(destFolder);
         assertTrue(listResponse2.contains(moveResponse));
 
         storage.remove(moveResponse);
 
-        List<String> listResponse3 = storage.check(destFolder);
+        List<String> listResponse3 = storage.list(destFolder);
         assertTrue(listResponse3.isEmpty());
     }
 
@@ -67,15 +67,15 @@ public class BlobStorageTest {
         String filename3 = "test2_1.xml";
 
         InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-        String putResponse = storage.putToCustom(inputStream, folder, filename1);
+        String putResponse = storage.put(inputStream, folder, filename1);
         assertEquals(folder + filename1, putResponse);
 
         InputStream inputStream2 = new ByteArrayInputStream(content.getBytes());
-        String putResponse2 = storage.putToCustom(inputStream2, folder, filename1);
+        String putResponse2 = storage.put(inputStream2, folder, filename1);
         assertEquals(folder + filename2, putResponse2);
 
         InputStream inputStream3 = new ByteArrayInputStream(content.getBytes());
-        String putResponse3 = storage.putToCustom(inputStream3, folder, filename1);
+        String putResponse3 = storage.put(inputStream3, folder, filename1);
         assertEquals(folder + filename3, putResponse3);
     }
 
