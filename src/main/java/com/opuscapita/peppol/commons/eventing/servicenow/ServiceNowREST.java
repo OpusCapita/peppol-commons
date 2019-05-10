@@ -19,12 +19,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@SuppressWarnings({"Duplicates", "WeakerAccess"})
+@Component
+@ConditionalOnProperty(name = "snc.enabled", havingValue = "true", matchIfMissing = true)
 public class ServiceNowREST implements ServiceNow {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceNowREST.class);
@@ -33,6 +37,7 @@ public class ServiceNowREST implements ServiceNow {
 
     private final ServiceNowConfiguration configuration;
 
+    @Autowired
     public ServiceNowREST(ServiceNowConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -45,7 +50,8 @@ public class ServiceNowREST implements ServiceNow {
         this.postRequest(postData);
     }
 
-    protected void postRequest(byte[] postData) throws IOException {
+    @SuppressWarnings("Duplicates")
+    private void postRequest(byte[] postData) throws IOException {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(new AuthScope(
                         new HttpHost(this.configuration.getHostName())),
@@ -115,7 +121,7 @@ public class ServiceNowREST implements ServiceNow {
         }
     }
 
-    protected boolean isSuccessfulResponse(String responseBody) {
+    private boolean isSuccessfulResponse(String responseBody) {
         JsonElement jsonResponse = (JsonElement) (new Gson()).fromJson(responseBody, JsonElement.class);
         JsonObject result = jsonResponse.getAsJsonObject().getAsJsonObject("result");
         if (result == null) {

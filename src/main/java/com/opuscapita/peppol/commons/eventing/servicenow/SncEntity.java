@@ -135,5 +135,4 @@ public class SncEntity {
         }
         return generated;
     }
-
 }

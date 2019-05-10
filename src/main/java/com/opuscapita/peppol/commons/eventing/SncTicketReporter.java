@@ -7,10 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Primary
 @Component
 public class SncTicketReporter implements TicketReporter {
 
@@ -67,5 +65,4 @@ public class SncTicketReporter implements TicketReporter {
                     " about " + shortDescription + " with data: " + detailedDescription, e);
         }
     }
-
 }
