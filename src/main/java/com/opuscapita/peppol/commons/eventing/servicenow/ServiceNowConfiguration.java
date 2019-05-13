@@ -1,12 +1,11 @@
 package com.opuscapita.peppol.commons.eventing.servicenow;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
-@Configuration
+@Component
 public class ServiceNowConfiguration {
 
     @Value("${snc.rest.url}")
@@ -32,9 +31,8 @@ public class ServiceNowConfiguration {
     public ServiceNowConfiguration() {
         try {
             this.hostName = new URI(httpUrl).getHost();
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             this.hostName = "instance.service-now.com";
-            e.printStackTrace();
         }
     }
 
