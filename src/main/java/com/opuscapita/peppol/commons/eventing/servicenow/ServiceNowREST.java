@@ -54,7 +54,7 @@ public class ServiceNowREST implements ServiceNow {
     private void postRequest(byte[] postData) throws IOException {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(new AuthScope(
-                        new HttpHost(this.configuration.getHostName())),
+                        new HttpHost(this.configuration.getHttpScope())),
                 new UsernamePasswordCredentials(this.configuration.getHttpUsername(), this.configuration.getHttpPassword()));
 
         try {
