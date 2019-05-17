@@ -55,4 +55,4 @@ The version number has 3 parts: `[major].[minor].[patch]`.
 
 During circleci build process, the latest git tag is fetched. The patch version is increased by one and pushed back to git as a new tag.
 
-To update major version, you need to create a new git tag manually, and also release it from your local..again manually.
+To update major version, you need to create a new git tag manually.
