@@ -50,7 +50,10 @@ dependencies {
 
     compile group: 'no.difi.vefa', name: 'peppol-sbdh', version: '1.0.4'
     compile group: 'no.difi.oxalis', name: 'oxalis-commons', version: '4.0.2'
-    compile group: 'no.difi.oxalis', name: 'oxalis-document-sniffer', version: '4.0.2'
+    compile (group: 'no.difi.oxalis', name: 'oxalis-document-sniffer', version: '4.0.2') {
+        exclude group: 'no.difi.vefa', module: 'peppol-icd'
+    }
+    compile group: 'no.difi.vefa', name: 'peppol-icd', version: '1.0.1'
 
     compile 'org.springframework.boot:spring-boot-starter-web:2.1.3.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-amqp:2.1.3.RELEASE'

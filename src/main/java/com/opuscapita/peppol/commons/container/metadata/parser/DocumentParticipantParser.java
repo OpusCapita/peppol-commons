@@ -134,7 +134,7 @@ class DocumentParticipantParser {
                 ret = new ParticipantId(companyId);
             } else {
                 // ... or when given schemeId matches the icd code stat eg NO:VAT matches 9908 from 9908:987654321
-                if (companyId.startsWith(SchemeId.parse(schemeIdTextValue).getCode() + ":")) {
+                if (companyId.startsWith(getIcdPrefix(schemeIdTextValue) + ":")) {
                     ret = new ParticipantId(companyId);
                 } else {
                     logger.error(String.format(
@@ -145,7 +145,7 @@ class DocumentParticipantParser {
             }
         } else {
             // try to add the given icd prefix to the participant id
-            companyId = String.format("%s:%s", SchemeId.parse(schemeIdTextValue).getCode(), companyId);
+            companyId = String.format("%s:%s", getIcdPrefix(schemeIdTextValue), companyId);
             if (!ParticipantId.isValidParticipantIdentifierPattern(companyId)) {
                 logger.error(String.format("ParticipantId syntax at '%s' evaluates to '%s' and is invalid", xPathExpr, companyId));
                 return null;
@@ -153,6 +153,16 @@ class DocumentParticipantParser {
             ret = new ParticipantId(companyId);
         }
         return ret.toVefa();
+    }
+
+    private String getIcdPrefix(String schemeIdTextValue) {
+        try {
+            // schemaId as ICD identifier e.g. "ES:VAT"
+            return SchemeId.parse(schemeIdTextValue).getCode();
+        } catch (IllegalArgumentException ignored) {
+            // schemaId as ICD code e.g. "9908"
+            return SchemeId.fromISO6523(schemeIdTextValue).getCode();
+        }
     }
 
     private Element retrieveElementForXpath(String s) {
