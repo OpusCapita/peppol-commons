@@ -52,6 +52,9 @@ public class AuthorizationService {
 
     public void setAuthorizationHeader(HttpHeaders headers) {
         AuthorizationResponse result = getTokenDetails(username);
+        if (result == null) {
+            result = updateTokenDetails(username);
+        }
         headers.set("X-User-Id-Token", result.getId_token());
 //        headers.set("Authorization", result.getAuthorizationHeader());
     }
