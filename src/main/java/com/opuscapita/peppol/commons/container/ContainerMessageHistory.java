@@ -36,6 +36,10 @@ public class ContainerMessageHistory implements Serializable {
         return logs;
     }
 
+    public void setLogs(List<DocumentLog> logs) {
+        this.logs = logs;
+    }
+
     public void addLog(DocumentLog log) {
         log.setSource(step);
         this.logs.add(log);
