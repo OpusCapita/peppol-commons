@@ -50,4 +50,14 @@ public class MetadataExtractor {
         }
     }
 
+    public ContainerBusinessMetadata extractBusinessMetadata(InputStream payload) {
+        try {
+            return headerParser.businessParse(payload);
+
+        } catch (Exception e) {
+            logger.error("MetadataExtractor encountered exception: " + e.getMessage());
+            return new ContainerBusinessMetadata();
+        }
+    }
+
 }

@@ -49,6 +49,7 @@ public class ContainerMessageMetadata implements Serializable {
     @Since(1.0) private String userAgent;
     @Since(1.0) private String userAgentVersion;
     @Since(1.0) private ContainerValidationRule validationRule;
+    @Since(1.1) private ContainerBusinessMetadata businessMetadata;
 
     public String getMessageId() {
         return messageId;
@@ -168,6 +169,14 @@ public class ContainerMessageMetadata implements Serializable {
 
     public void setValidationRule(ContainerValidationRule validationRule) {
         this.validationRule = validationRule;
+    }
+
+    public ContainerBusinessMetadata getBusinessMetadata() {
+        return businessMetadata;
+    }
+
+    public void setBusinessMetadata(ContainerBusinessMetadata businessMetadata) {
+        this.businessMetadata = businessMetadata;
     }
 
     public String getTransmissionId() {

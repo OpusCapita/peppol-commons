@@ -14,19 +14,20 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 class DocumentParticipantParser {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentParticipantParser.class);
 
-    private final XPath xPath;
-    private final Document document;
+    protected final XPath xPath;
+    protected final Document document;
 
     DocumentParticipantParser(Document document, XPath xPath) {
         this.xPath = xPath;
         this.document = document;
     }
 
-    private String localName() {
+    protected String localName() {
         return document.getDocumentElement().getLocalName();
     }
 
@@ -66,6 +67,34 @@ class DocumentParticipantParser {
         return checkPaths(paths);
     }
 
+    String getSenderName() {
+        List<String> paths = new ArrayList<>();
+
+        String type = localName();
+        if ("DespatchAdvice".equalsIgnoreCase(type)) {
+            paths.add("//cac:DespatchSupplierParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Catalogue".equalsIgnoreCase(type)) {
+            paths.add("//cac:ProviderParty/cac:PartyName/cbc:Name");
+            paths.add("//cac:SellerSupplierParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Invoice".equalsIgnoreCase(type) || "CreditNote".equalsIgnoreCase(type) || "Reminder".equalsIgnoreCase(type)) {
+            paths.add("//cac:AccountingSupplierParty/cac:Party/cac:PartyName/cbc:Name");
+            paths.add("//cac:SellerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Order".equalsIgnoreCase(type)) {
+            paths.add("//cac:BuyerCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("OrderResponse".equalsIgnoreCase(type) || "OrderResponseSimple".equalsIgnoreCase(type)) {
+            paths.add("//cac:SellerSupplierParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("ApplicationResponse".equalsIgnoreCase(type)) {
+            paths.add("//cac:SenderParty/cac:PartyName/cbc:Name");
+        }
+
+        return checkPathsString(paths);
+    }
+
     ParticipantIdentifier getReceiver() {
         List<String> paths = new ArrayList<>();
 
@@ -102,6 +131,34 @@ class DocumentParticipantParser {
         return checkPaths(paths);
     }
 
+    String getReceiverName() {
+        List<String> paths = new ArrayList<>();
+
+        String type = localName();
+        if ("DespatchAdvice".equalsIgnoreCase(type)) {
+            paths.add("//cac:DeliveryCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Catalogue".equalsIgnoreCase(type)) {
+            paths.add("//cac:ReceiverParty/cac:PartyName/cbc:Name");
+            paths.add("//cac:BuyerCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Invoice".equalsIgnoreCase(type) || "CreditNote".equalsIgnoreCase(type) || "Reminder".equalsIgnoreCase(type)) {
+            paths.add("//cac:AccountingCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+            paths.add("//cac:BuyerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("Order".equalsIgnoreCase(type)) {
+            paths.add("//cac:SellerSupplierParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("OrderResponse".equalsIgnoreCase(type) || "OrderResponseSimple".equalsIgnoreCase(type)) {
+            paths.add("//cac:BuyerCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+        }
+        if ("ApplicationResponse".equalsIgnoreCase(type)) {
+            paths.add("//cac:ReceiverParty/cac:PartyName/cbc:Name");
+        }
+
+        return checkPathsString(paths);
+    }
+
     private ParticipantIdentifier checkPaths(List<String> paths) {
         for (String path : paths) {
             try {
@@ -109,6 +166,16 @@ class DocumentParticipantParser {
                 if (result != null) {
                     return result;
                 }
+            } catch (Exception ignored) {
+            }
+        }
+        return null;
+    }
+
+    private String checkPathsString(List<String> paths) {
+        for (String path : paths) {
+            try {
+                return retriveValueForXpath(path);
             } catch (Exception ignored) {
             }
         }
@@ -172,6 +239,18 @@ class DocumentParticipantParser {
                 throw new IllegalStateException("No element in XPath: " + s);
             }
             return element;
+        } catch (XPathExpressionException e) {
+            throw new IllegalStateException("Unable to evaluate " + s + "; " + e.getMessage(), e);
+        }
+    }
+
+    protected String retriveValueForXpath(String s) {
+        try {
+            String value = xPath.evaluate(s, document);
+            if (value == null) {
+                throw new IllegalStateException("Unable to find value for Xpath expr " + s);
+            }
+            return value.trim();
         } catch (XPathExpressionException e) {
             throw new IllegalStateException("Unable to evaluate " + s + "; " + e.getMessage(), e);
         }

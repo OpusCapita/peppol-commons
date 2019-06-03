@@ -1,5 +1,6 @@
 package com.opuscapita.peppol.commons.container.metadata.parser;
 
+import com.opuscapita.peppol.commons.container.metadata.ContainerBusinessMetadata;
 import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.sniffer.PeppolStandardBusinessHeader;
 import no.difi.oxalis.sniffer.document.HardCodedNamespaceResolver;
@@ -59,7 +60,6 @@ public class DocumentHeaderParser {
      */
     private PeppolStandardBusinessHeader originalParse(InputStream inputStream) throws OxalisContentException {
         try {
-
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(inputStream);
 
@@ -78,6 +78,30 @@ public class DocumentHeaderParser {
             return sbdh;
         } catch (Exception e) {
             throw new OxalisContentException("Unable to parseOld document " + e.getMessage(), e);
+        }
+    }
+
+    public ContainerBusinessMetadata businessParse(InputStream inputStream) throws OxalisContentException {
+        try {
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(inputStream);
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new HardCodedNamespaceResolver());
+
+            ContainerBusinessMetadata metadata = new ContainerBusinessMetadata();
+
+            DocumentPayloadParser parser = new DocumentPayloadParser(document, xPath);
+            if (parser.canParse()) {
+                metadata.setDocumentId(parser.fetchId());
+                metadata.setIssueDate(parser.fetchIssueDate());
+                metadata.setIssueTime(parser.fetchIssueTime());
+                metadata.setSenderName(parser.getSenderName());
+                metadata.setReceiverName(parser.getReceiverName());
+            }
+            return metadata;
+        } catch (Exception e) {
+            throw new OxalisContentException("Unable to parse business metadata " + e.getMessage(), e);
         }
     }
 }
