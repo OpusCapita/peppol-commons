@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,9 @@ public class MetadataValidator {
             String tmp = missingFields.stream().collect(Collectors.joining(", "));
             cm.getHistory().addError("Missing metadata information [" + tmp + "]");
         }
+
+        // trying to extract additional business metadata, optional
+        metadata.setBusinessMetadata(extractBusinessMetadata(cm));
     }
 
     private ContainerMessageMetadata extractMetadataFromHeader(@NotNull ContainerMessage cm) throws Exception {
@@ -90,6 +94,14 @@ public class MetadataValidator {
             ContainerMessageMetadata metadata = metadataExtractor.extractFromPayload(content);
             cm.setMetadata(metadata);
             return metadata;
+        }
+    }
+
+    private ContainerBusinessMetadata extractBusinessMetadata(@NotNull ContainerMessage cm) {
+        try (InputStream content = storage.get(cm.getFileName())) {
+            return metadataExtractor.extractBusinessMetadata(content);
+        } catch (IOException ignored) {
+            return null;
         }
     }
 
