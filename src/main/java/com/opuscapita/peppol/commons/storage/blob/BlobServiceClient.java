@@ -83,17 +83,17 @@ public class BlobServiceClient {
 
     public BlobServiceResponse putFile(InputStream data, String path) throws StorageException {
         logger.debug("File storage requested from blob service to path: " + path);
-        String endpoint = getEndpoint(path);
-        logger.debug("Putting file to endpoint: " + endpoint);
-
-        HttpHeaders headers = new HttpHeaders();
-        authService.setAuthorizationHeader(headers);
-        headers.set("Transfer-Encoding", "chunked");
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        HttpEntity<Resource> entity = new HttpEntity<>(new InputStreamResource(data), headers);
-        logger.debug("Wrapped and set the request body as input stream");
-
         try {
+            String endpoint = getEndpoint(path);
+            logger.debug("Putting file to endpoint: " + endpoint);
+
+            HttpHeaders headers = new HttpHeaders();
+            authService.setAuthorizationHeader(headers);
+            headers.set("Transfer-Encoding", "chunked");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            HttpEntity<Resource> entity = new HttpEntity<>(new InputStreamResource(data), headers);
+            logger.debug("Wrapped and set the request body as input stream");
+
             ResponseEntity<BlobServiceResponse> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, BlobServiceResponse.class);
             logger.debug("File stored successfully to blob service path: " + path);
             return result.getBody();

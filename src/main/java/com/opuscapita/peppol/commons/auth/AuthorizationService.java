@@ -56,7 +56,6 @@ public class AuthorizationService {
             result = updateTokenDetails(username);
         }
         headers.set("X-User-Id-Token", result.getId_token());
-//        headers.set("Authorization", result.getAuthorizationHeader());
     }
 
     /**
