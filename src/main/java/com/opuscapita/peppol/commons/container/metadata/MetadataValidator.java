@@ -78,7 +78,9 @@ public class MetadataValidator {
         }
 
         // trying to extract additional business metadata, optional
-        metadata.setBusinessMetadata(extractBusinessMetadata(cm));
+        if (metadata.getBusinessMetadata() == null || StringUtils.isBlank(metadata.getBusinessMetadata().getDocumentId())) {
+            metadata.setBusinessMetadata(extractBusinessMetadata(cm));
+        }
     }
 
     private ContainerMessageMetadata extractMetadataFromHeader(@NotNull ContainerMessage cm) throws Exception {
