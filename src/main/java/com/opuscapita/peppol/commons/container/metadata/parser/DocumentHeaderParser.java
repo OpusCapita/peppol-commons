@@ -92,13 +92,11 @@ public class DocumentHeaderParser {
             ContainerBusinessMetadata metadata = new ContainerBusinessMetadata();
 
             DocumentPayloadParser parser = new DocumentPayloadParser(document, xPath);
-            if (parser.canParse()) {
-                metadata.setDocumentId(parser.fetchId());
-                metadata.setIssueDate(parser.fetchIssueDate());
-                metadata.setIssueTime(parser.fetchIssueTime());
-                metadata.setSenderName(parser.getSenderName());
-                metadata.setReceiverName(parser.getReceiverName());
-            }
+            metadata.setDocumentId(parser.fetchId());
+            metadata.setIssueDate(parser.fetchIssueDate());
+            metadata.setIssueTime(parser.fetchIssueTime());
+            metadata.setSenderName(parser.getSenderName());
+            metadata.setReceiverName(parser.getReceiverName());
             return metadata;
         } catch (Exception e) {
             throw new OxalisContentException("Unable to parse business metadata " + e.getMessage(), e);

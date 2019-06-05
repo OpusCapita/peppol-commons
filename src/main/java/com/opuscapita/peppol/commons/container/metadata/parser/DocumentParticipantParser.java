@@ -28,7 +28,11 @@ class DocumentParticipantParser {
     }
 
     protected String localName() {
-        return document.getDocumentElement().getLocalName();
+        String localName = document.getDocumentElement().getLocalName();
+        if ("StandardBusinessDocument".equals(localName)) {
+            localName = document.getDocumentElement().getChildNodes().item(1).getLocalName();
+        }
+        return localName;
     }
 
     ParticipantIdentifier getSender() {
