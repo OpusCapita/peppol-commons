@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.xpath.XPath;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DocumentPayloadParser extends DocumentParticipantParser {
 
@@ -38,32 +40,32 @@ public class DocumentPayloadParser extends DocumentParticipantParser {
     }
 
     private String ublVersion() {
-        String version = retriveValueForXpath("//cbc:UBLVersionID");
+        List<String> paths = new ArrayList<>();
+        paths.add("//cbc:UBLVersionID");
+        paths.add("//UBLVersionID");
+        String version = checkPathsString(paths);
         return StringUtils.isNotBlank(version) ? version : "2.1"; //maybe?
     }
 
     String fetchId() {
-        try {
-            return retriveValueForXpath("//cbc:ID");
-        } catch (Exception e) {
-            return null;
-        }
+        List<String> paths = new ArrayList<>();
+        paths.add("//cbc:ID");
+        paths.add("//ID");
+        return checkPathsString(paths);
     }
 
     String fetchIssueDate() {
-        try {
-            return retriveValueForXpath("//cbc:IssueDate");
-        } catch (Exception e) {
-            return null;
-        }
+        List<String> paths = new ArrayList<>();
+        paths.add("//cbc:IssueDate");
+        paths.add("//IssueDate");
+        return checkPathsString(paths);
     }
 
     String fetchIssueTime() {
-        try {
-            return retriveValueForXpath("//cbc:IssueTime");
-        } catch (Exception e) {
-            return null;
-        }
+        List<String> paths = new ArrayList<>();
+        paths.add("//cbc:IssueTime");
+        paths.add("//IssueTime");
+        return checkPathsString(paths);
     }
 
 }

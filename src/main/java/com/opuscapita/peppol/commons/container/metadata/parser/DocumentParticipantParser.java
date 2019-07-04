@@ -163,7 +163,7 @@ class DocumentParticipantParser {
         return checkPathsString(paths);
     }
 
-    private ParticipantIdentifier checkPaths(List<String> paths) {
+    protected ParticipantIdentifier checkPaths(List<String> paths) {
         for (String path : paths) {
             try {
                 ParticipantIdentifier result = participantId(path);
@@ -176,7 +176,7 @@ class DocumentParticipantParser {
         return null;
     }
 
-    private String checkPathsString(List<String> paths) {
+    protected String checkPathsString(List<String> paths) {
         for (String path : paths) {
             try {
                 return retriveValueForXpath(path);
