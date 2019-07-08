@@ -3,6 +3,7 @@ package com.opuscapita.peppol.commons.container.metadata.parser;
 import no.difi.oxalis.sniffer.identifier.ParticipantId;
 import no.difi.oxalis.sniffer.identifier.SchemeId;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -30,7 +31,12 @@ class DocumentParticipantParser {
     protected String localName() {
         String localName = document.getDocumentElement().getLocalName();
         if ("StandardBusinessDocument".equals(localName)) {
-            localName = document.getDocumentElement().getChildNodes().item(1).getLocalName();
+            for (int i = 0; i < document.getDocumentElement().getChildNodes().getLength(); i++) {
+                String child = document.getDocumentElement().getChildNodes().item(i).getLocalName();
+                if (StringUtils.isNotBlank(child) && !"StandardBusinessDocumentHeader".equals(child)) {
+                    localName = child;
+                }
+            }
         }
         return localName;
     }

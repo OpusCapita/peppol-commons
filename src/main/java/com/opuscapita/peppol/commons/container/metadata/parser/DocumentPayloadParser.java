@@ -40,18 +40,37 @@ public class DocumentPayloadParser extends DocumentParticipantParser {
     }
 
     private String ublVersion() {
-        List<String> paths = new ArrayList<>();
-        paths.add("//cbc:UBLVersionID");
-        paths.add("//UBLVersionID");
-        String version = checkPathsString(paths);
+        String version = null;
+        try {
+            version = retriveValueForXpath("//cbc:UBLVersionID");
+        } catch (Exception ignored) {
+        }
+
+        if (StringUtils.isBlank(version)) {
+            try {
+                version = document.getElementsByTagName("UBLVersionID").item(0).getTextContent();
+            } catch (Exception ignored) {
+            }
+        }
+
         return StringUtils.isNotBlank(version) ? version : "2.1"; //maybe?
     }
 
     String fetchId() {
-        List<String> paths = new ArrayList<>();
-        paths.add("//cbc:ID");
-        paths.add("//ID");
-        return checkPathsString(paths);
+        String id = null;
+        try {
+            id = retriveValueForXpath("//cbc:ID");
+        } catch (Exception ignored) {
+        }
+
+        if (StringUtils.isBlank(id)) {
+            try {
+                id = document.getElementsByTagName("ID").item(0).getTextContent();
+            } catch (Exception ignored) {
+            }
+        }
+
+        return id;
     }
 
     String fetchIssueDate() {
