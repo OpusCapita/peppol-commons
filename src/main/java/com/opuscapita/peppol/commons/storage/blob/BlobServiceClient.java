@@ -115,9 +115,13 @@ public class BlobServiceClient {
         logger.debug("Wrapped and set the request body as string");
 
         try {
-            restTemplate.exchange(endpoint, HttpMethod.PUT, entity, String.class);
-            logger.debug("File moved successfully in blob service to path: " + destinationPath);
-            return destinationPath;
+            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.PUT, entity, String.class);
+            if (result.getStatusCode().is2xxSuccessful()) {
+                logger.debug("File moved successfully in blob service to path: " + destinationPath);
+                return destinationPath;
+            }
+
+            throw new RuntimeException(result.toString());
         } catch (Exception e) {
             throw new StorageException("Error occurred while trying to move the file in blob service", e);
         }
