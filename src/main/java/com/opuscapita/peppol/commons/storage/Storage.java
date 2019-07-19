@@ -16,6 +16,15 @@ public interface Storage {
     InputStream get(String path) throws StorageException;
 
     /**
+     * Returns the file size as Integer bytes
+     *
+     * @param path full path of the file ex: "/peppol/hot/20190223/test.xml"
+     * @return file size
+     * @throws StorageException storage exception
+     */
+    Long size(String path) throws StorageException;
+
+    /**
      * Checks the folder and returns the full path of the files in that folder as a string list
      *
      * @param folder the folder name to list, has to end with a slash ex: "/peppol/in/a2a/"

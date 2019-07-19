@@ -1,8 +1,13 @@
 package com.opuscapita.peppol.commons.storage.blob;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.Date;
 
 public class BlobServiceResponse {
+
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
     private String name;
     private String location;
@@ -11,6 +16,10 @@ public class BlobServiceResponse {
     private Boolean isFile;
     private Boolean isDirectory;
     private Date lastModified;
+
+    public static BlobServiceResponse fromJson(String json) {
+        return gson.fromJson(json, BlobServiceResponse.class);
+    }
 
     public String getName() {
         return name;

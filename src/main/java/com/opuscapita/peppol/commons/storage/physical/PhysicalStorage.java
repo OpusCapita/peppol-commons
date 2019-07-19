@@ -35,6 +35,15 @@ public class PhysicalStorage implements Storage {
     }
 
     @Override
+    public Long size(String path) throws StorageException {
+        try {
+            return new File(path).length();
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
+    @Override
     public List<String> list(String folder) throws StorageException {
         try {
             File[] files = new File(folder).listFiles();

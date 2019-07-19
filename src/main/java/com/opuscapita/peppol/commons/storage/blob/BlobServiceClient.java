@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -147,7 +148,16 @@ public class BlobServiceClient {
     }
 
     public boolean isExists(String path) throws StorageException {
-        logger.debug("File exists check requested from blob service for path: " + path);
+        return size(path) != 0L;
+    }
+
+    public Long size(String path) throws StorageException {
+        BlobServiceResponse response = head(path);
+        return response == null ? 0L : response.getSize().longValue();
+    }
+
+    public BlobServiceResponse head(String path) throws StorageException {
+        logger.debug("File head requested from blob service for path: " + path);
         String endpoint = getEndpoint(path);
         logger.debug("Checking file at endpoint: " + endpoint);
 
@@ -159,11 +169,11 @@ public class BlobServiceClient {
 
         try {
             ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.HEAD, entity, String.class);
-            Boolean exists = (result.getStatusCodeValue() >= 200 && result.getStatusCodeValue() < 300);
-            logger.debug("File in the blob service does " + (exists ? "" : "not") + " exist in the path: " + path);
-            return exists;
+            String json = URLDecoder.decode(result.getHeaders().getFirst("X-File-Info"), "UTF-8");
+            return BlobServiceResponse.fromJson(json);
+
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 

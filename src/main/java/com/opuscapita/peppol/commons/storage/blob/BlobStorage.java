@@ -36,6 +36,11 @@ public class BlobStorage implements Storage {
     }
 
     @Override
+    public Long size(String path) throws StorageException {
+        return client.size(path);
+    }
+
+    @Override
     public List<String> list(String folder) throws StorageException {
         return client.listFolder(folder).stream().map(BlobServiceResponse::getPath).collect(Collectors.toList());
     }
