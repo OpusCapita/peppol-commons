@@ -69,7 +69,7 @@ public class BlobServiceClient {
     }
 
     private <T> ResponseEntity<T> get(String path, Class<T> type) throws StorageException {
-        String endpoint = getEndpoint(path);
+        String endpoint = getEndpoint(path, false);
         logger.debug("Reading file from endpoint: " + endpoint);
 
         HttpHeaders headers = new HttpHeaders();
@@ -158,7 +158,7 @@ public class BlobServiceClient {
 
     public BlobServiceResponse head(String path) throws StorageException {
         logger.debug("File head requested from blob service for path: " + path);
-        String endpoint = getEndpoint(path);
+        String endpoint = getEndpoint(path, false);
         logger.debug("Checking file at endpoint: " + endpoint);
 
         HttpHeaders headers = new HttpHeaders();
@@ -178,6 +178,10 @@ public class BlobServiceClient {
     }
 
     private String getEndpoint(String path) throws StorageException {
+        return getEndpoint(path, true);
+    }
+
+    private String getEndpoint(String path, boolean createMissing) throws StorageException {
         if (StringUtils.isBlank(tenant)) {
             throw new StorageException("Blob service cannot be used: Missing configuration \"peppol.auth.tenant.id\".");
         }
@@ -187,7 +191,7 @@ public class BlobServiceClient {
                 .port(port)
                 .path("/api/" + tenant + "/files" + path)
                 .queryParam("inline", "true")
-                .queryParam("createMissing", "true")
+                .queryParam("createMissing", String.valueOf(createMissing))
                 .queryParam("recursive", "true")
                 .toUriString();
     }

@@ -1,5 +1,8 @@
 package com.opuscapita.peppol.commons.storage;
 
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -13,6 +16,7 @@ public interface Storage {
      * @return file content
      * @throws StorageException storage exception
      */
+    @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 3000))
     InputStream get(String path) throws StorageException;
 
     /**
@@ -51,6 +55,7 @@ public interface Storage {
      * @return the final full path of the file ex: "/peppol/in/xib/test.xml"
      * @throws StorageException storage exception
      */
+    @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 3000))
     String put(InputStream content, String folder, String filename) throws StorageException;
 
     /**
@@ -61,6 +66,7 @@ public interface Storage {
      * @return the final full path of the file ex: "/peppol/out/xib/test.xml"
      * @throws StorageException storage exception
      */
+    @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 3000))
     String move(String path, String folder) throws StorageException;
 
     /**
