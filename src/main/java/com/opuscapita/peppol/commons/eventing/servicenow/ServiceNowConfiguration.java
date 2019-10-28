@@ -6,25 +6,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceNowConfiguration {
 
-    @Value("${snc.rest.url}")
+    @Value("${snc.rest.url:localhost}")
     private String httpUrl;
 
-    @Value("${snc.rest.scope}")
+    @Value("${snc.rest.scope:localhost}")
     private String httpScope;
 
-    @Value("${snc.rest.username}")
+    @Value("${snc.rest.username:test}")
     private String httpUsername;
 
-    @Value("${snc.rest.password}")
+    @Value("${snc.rest.password:test}")
     private String httpPassword;
 
-    @Value("${snc.bsc}")
+    @Value("${snc.bsc:test}")
     private String sncBsc;
 
-    @Value("${snc.from}")
+    @Value("${snc.from:peppol@opuscapita.com}")
     private String sncFrom;
 
-    @Value("${snc.businessGroup}")
+    @Value("${snc.businessGroup:test}")
     private String sncBusinessGroup;
 
     public String getHttpUrl() {
