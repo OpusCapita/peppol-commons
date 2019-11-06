@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -41,9 +41,9 @@ public class BlobServiceClient {
     private AuthorizationService authService;
 
     @Autowired
-    public BlobServiceClient(AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
+    public BlobServiceClient(AuthorizationService authService, @Qualifier("peppol") RestTemplate restTemplate) {
         this.authService = authService;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplate;
     }
 
     public List<BlobServiceResponse> listFolder(String folder) throws StorageException {
