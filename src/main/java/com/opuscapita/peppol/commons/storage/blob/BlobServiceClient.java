@@ -6,11 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,9 +43,10 @@ public class BlobServiceClient {
     private AuthorizationService authService;
 
     @Autowired
-    public BlobServiceClient(AuthorizationService authService, @Qualifier("peppol") RestTemplate restTemplate) {
+    public BlobServiceClient(AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
         this.authService = authService;
-        this.restTemplate = restTemplate;
+        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
     }
 
     public List<BlobServiceResponse> listFolder(String folder) throws StorageException {
