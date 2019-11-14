@@ -74,8 +74,8 @@ public class BlobServiceClient {
 
         HttpHeaders headers = new HttpHeaders();
         authService.setAuthorizationHeader(headers);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));
         HttpEntity<String> entity = new HttpEntity<>("body", headers);
         logger.debug("Setting http headers content type to application json");
 

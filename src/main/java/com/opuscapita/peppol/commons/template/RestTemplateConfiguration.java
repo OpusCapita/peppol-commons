@@ -1,26 +1,32 @@
 package com.opuscapita.peppol.commons.template;
 
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.Charset;
 
 @Configuration
 public class RestTemplateConfiguration {
 
     private final Integer TIMEOUT = 10000;
 
+    @Autowired
+    private RestTemplateBuilder restTemplateBuilder;
+
     @Bean
     @LoadBalanced
     @Qualifier("peppol")
     public RestTemplate restTemplate() throws Exception {
-        return new RestTemplate();
+        restTemplateBuilder.messageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+        return restTemplateBuilder.build();
     }
 
 //    @Bean
