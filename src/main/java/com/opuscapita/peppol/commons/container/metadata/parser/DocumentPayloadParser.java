@@ -70,6 +70,14 @@ public class DocumentPayloadParser extends DocumentParticipantParser {
             }
         }
 
+        // 162: BEAst Order (not ubl)
+        if (StringUtils.isBlank(id)) {
+            try {
+                id = retriveValueForXpath("//OrderHeader/OrderNumber");
+            } catch (Exception ignored) {
+            }
+        }
+
         return id;
     }
 
@@ -77,6 +85,7 @@ public class DocumentPayloadParser extends DocumentParticipantParser {
         List<String> paths = new ArrayList<>();
         paths.add("//cbc:IssueDate");
         paths.add("//IssueDate");
+        paths.add("//OrderHeader/OrderDateAndTime");
         return checkPathsString(paths);
     }
 

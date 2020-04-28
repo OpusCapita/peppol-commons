@@ -94,6 +94,7 @@ class DocumentParticipantParser {
         }
         if ("Order".equalsIgnoreCase(type)) {
             paths.add("//cac:BuyerCustomerParty/cac:Party/cac:PartyName/cbc:Name");
+            paths.add("//OrderHeader/BuyerNeB/AddressNeB/PartyName");
         }
         if ("OrderResponse".equalsIgnoreCase(type) || "OrderResponseSimple".equalsIgnoreCase(type)) {
             paths.add("//cac:SellerSupplierParty/cac:Party/cac:PartyName/cbc:Name");
@@ -185,7 +186,10 @@ class DocumentParticipantParser {
     protected String checkPathsString(List<String> paths) {
         for (String path : paths) {
             try {
-                return retriveValueForXpath(path);
+                String value = retriveValueForXpath(path);
+                if (StringUtils.isNotBlank(value)) {
+                    return value;
+                }
             } catch (Exception ignored) {
             }
         }
