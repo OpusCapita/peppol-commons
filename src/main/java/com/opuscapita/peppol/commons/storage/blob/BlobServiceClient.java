@@ -31,12 +31,12 @@ public class BlobServiceClient {
 
     private static final Logger logger = LoggerFactory.getLogger(BlobServiceClient.class);
 
-    @Value("${peppol.storage.blob.url}")
+    @Value("${peppol.storage.blob.url:localhost}")
     private String host;
-    @Value("${peppol.storage.blob.port}")
+    @Value("${peppol.storage.blob.port:9997}")
     private String port;
 
-    @Value("${peppol.auth.tenant.id}")
+    @Value("${peppol.auth.tenant.id:opuscapita}")
     private String tenant;
 
     private RestTemplate restTemplate;

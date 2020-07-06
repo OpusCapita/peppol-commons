@@ -8,55 +8,29 @@ public class Route implements Serializable {
 
     private static final long serialVersionUID = -9123055794300438134L;
 
-    @Since(1.0) private String mask;
-    @Since(1.0) private String source;
-    @Since(1.0) private String destination;
-    @Since(1.0) private String description;
+    @Since(1.1) private Source destination;
     @Since(1.0) private int retry = 0;
     @Since(1.0) private int delay = 0;
-    @Since(1.0) private int current = 0;
+    @Since(1.0) private int current = -1;
 
     public Route() {
     }
 
-    public Route(Route other) {
-        this.destination = other.getDestination();
-        this.description = other.getDescription();
-        this.mask = other.getMask();
-        this.source = other.getSource();
-        this.retry = other.getRetry();
-        this.delay = other.getDelay();
+    public Route(Source destination) {
+        this.destination = destination;
     }
 
-    public String getDescription() {
-        return description;
+    public void initiate(int retry, int delay) {
+        this.retry = retry;
+        this.delay = delay;
+        this.current = 0;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getMask() {
-        return mask;
-    }
-
-    public void setMask(String mask) {
-        this.mask = mask;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getDestination() {
+    public Source getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Source destination) {
         this.destination = destination;
     }
 
@@ -76,19 +50,21 @@ public class Route implements Serializable {
         this.delay = delay;
     }
 
+    public int getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(int current) {
+        this.current = current;
+    }
+
     public int incrementAndGetCurrent() {
         return ++current;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(description);
-        if (mask != null) {
-            result.append(" (").append(mask).append(") ");
-        }
-        result.append("[ ").append(source).append(" ");
-        result.append(destination);
-        return result + "]";
+        return destination + " [" + current + "]";
     }
 
 }

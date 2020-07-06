@@ -36,9 +36,9 @@ public class AuthorizationService {
     @Value("${service-client.client-secret:''}")
     private String clientSecret;
 
-    @Value("${peppol.auth.url}")
+    @Value("${peppol.auth.url:localhost}")
     private String host;
-    @Value("${peppol.auth.port}")
+    @Value("${peppol.auth.port:9997}")
     private String port;
 
     private RestTemplate restTemplate;
