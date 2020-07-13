@@ -9,21 +9,13 @@ public class Route implements Serializable {
     private static final long serialVersionUID = -9123055794300438134L;
 
     @Since(1.1) private Source destination;
-    @Since(1.0) private int retry = 0;
-    @Since(1.0) private int delay = 0;
-    @Since(1.0) private int current = -1;
+    @Since(1.2) private int retryCount = 0;
 
     public Route() {
     }
 
     public Route(Source destination) {
         this.destination = destination;
-    }
-
-    public void initiate(int retry, int delay) {
-        this.retry = retry;
-        this.delay = delay;
-        this.current = 0;
     }
 
     public Source getDestination() {
@@ -34,37 +26,21 @@ public class Route implements Serializable {
         this.destination = destination;
     }
 
-    public int getRetry() {
-        return retry;
+    public int getRetryCount() {
+        return retryCount;
     }
 
-    public void setRetry(int retry) {
-        this.retry = retry;
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
     }
 
-    public int getDelay() {
-        return delay;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
-    public int getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(int current) {
-        this.current = current;
-    }
-
-    public int incrementAndGetCurrent() {
-        return ++current;
+    public int incrementAndGetRetryCount() {
+        return ++retryCount;
     }
 
     @Override
     public String toString() {
-        return destination + " [" + current + "]";
+        return destination + " [" + retryCount + "]";
     }
 
 }
