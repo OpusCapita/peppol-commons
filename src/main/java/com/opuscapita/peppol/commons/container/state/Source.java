@@ -5,5 +5,6 @@ public enum Source {
     A2A,
     XIB,
     SIRIUS,
-    UNKNOWN;
+    UNKNOWN,
+    GW_HTTPBASIC;
 }
