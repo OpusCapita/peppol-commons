@@ -15,7 +15,7 @@ Common services include;
 This project is being published as a library to [Maven Central Repository](https://search.maven.org/search?q=g:com.opuscapita.peppol%20AND%20a:peppol-commons&core=gav)
 
 ### Publishing
-Every changes pushed to master branch will trigger a new release and auto-publish to maven central. 
+Every changes pushed to master branch will trigger a new release and auto-publish to maven central.
 
 For a manuel publish, first you need to populate a gradle.properties file. (note that this file is ignored by git, please DO NOT push it).
 
@@ -51,8 +51,9 @@ If you want to test your changes locally, you can publish to your local reposito
 
 
 ### Versioning
-The version number has 3 parts: `[major].[minor].[patch]`. 
+The version number has 3 parts: `[major].[minor].[patch]`.
 
 During circleci build process, the latest git tag is fetched. The patch version is increased by one and pushed back to git as a new tag.
 
 To update major version, you need to create a new git tag manually.
+ 
