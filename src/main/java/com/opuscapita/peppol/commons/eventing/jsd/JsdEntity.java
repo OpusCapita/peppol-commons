@@ -1,4 +1,4 @@
-package com.opuscapita.peppol.commons.eventing.servicenow;
+package com.opuscapita.peppol.commons.eventing.jsd;
 
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.codec.binary.Hex;
@@ -9,11 +9,41 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class SncEntity {
 
-    @SerializedName("u_short_descr")
+/*
+
+entity.setBsc(this.configuration.getSncBsc());
+entity.setBusinessGroup(this.configuration.getSncBusinessGroup());
+entity.setFrom(this.configuration.getSncFrom() + HOST);
+
+this.shortDescription = shortDescription;
+this.detailedDescription = detailedDescription;
+
+*/
+public class JsdEntity {
+
+    //@SerializedName("u_short_descr")
     private String shortDescription;
-    @SerializedName("u_bsc")
+
+    //@SerializedName("u_det_descr")
+    private String detailedDescription;
+
+/*
+{
+  "fields": {
+    "project": {
+      "id": "10800"
+    },
+    "issuetype": {
+      "id": "10202"
+    },
+    "summary": "short description",
+    "description": "hfhhhdf\neyyeyyyr\nyyrytytrre\nrereyyrrr"
+  }
+}
+*/
+
+/*    @SerializedName("u_bsc")
     private String bsc;
     @SerializedName("u_business_group")
     private String businessGroup;
@@ -21,8 +51,6 @@ public class SncEntity {
     private String correlationId;
     @SerializedName("u_customer_id")
     private String customerId;
-    @SerializedName("u_det_descr")
-    private String detailedDescription;
     @SerializedName("u_from")
     private String from;
     @SerializedName("u_occurred_on")
@@ -31,15 +59,16 @@ public class SncEntity {
     private String priority;
     @SerializedName("u_email_to")
     private String emailTo;
+    */
 
-    public SncEntity(String shortDescription, String detailedDescription, String customerId) {
-        this.priority = "3";
-        this.customerId = customerId;
-        this.emailTo = "info.no@opuscapita.com";
+    public JsdEntity(String shortDescription, String detailedDescription, String customerId) {
+        //this.priority = "3";
+        //this.customerId = customerId;
+        //this.emailTo = "info.no@opuscapita.com";
         this.shortDescription = shortDescription;
-        this.correlationId = createCorrelationId();
+        //this.correlationId = createCorrelationId();
         this.detailedDescription = detailedDescription;
-        this.occurredOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        //this.occurredOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
     public String getShortDescription() {
@@ -50,6 +79,7 @@ public class SncEntity {
         this.shortDescription = shortDescription;
     }
 
+/*
     public String getBsc() {
         return this.bsc;
     }
@@ -81,7 +111,7 @@ public class SncEntity {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
-
+*/
     public String getDetailedDescription() {
         return this.detailedDescription;
     }
@@ -90,6 +120,44 @@ public class SncEntity {
         this.detailedDescription = detailedDescription;
     }
 
+    public String escape( String in ) {
+      String out;
+
+      out = in.replace("\n", "\\n");
+      out = out.replace("\r", "");
+      out = out.replace("\t", "\\t");
+      out = out.replace("\"", "\\\"");
+
+
+      return out;
+
+    }
+
+    public String getAsJSON() {
+
+      String newline = "\n";
+
+      String json =
+
+        "{" + newline +
+        "  \"fields\": {" + newline +
+        "    \"project\": {" + newline +
+        "      \"id\": \"10800\"" + newline +
+        "    }," + newline +
+        "    \"issuetype\": {" + newline +
+        "      \"id\": \"10202\"" + newline +
+        "    }," + newline +
+        "    \"summary\": \""+this.escape(this.getShortDescription())+"\"," + newline +
+        "    \"description\": \""+ this.escape( this.getDetailedDescription() )+"\"" + newline +
+        "  }" + newline +
+        "}" + newline;
+
+
+      return json;
+
+    }
+
+/*
     public String getFrom() {
         return this.from;
     }
@@ -135,4 +203,5 @@ public class SncEntity {
         }
         return generated;
     }
+    */
 }

@@ -36,11 +36,11 @@ public class OcEventReporter implements EventReporter {
 
     private void failedToProcess(ContainerMessage cm, Throwable e) {
         String shortDescription = "OcEventReporter failed to report the status of the message: " + cm.getFileName();
-        logger.warn("Reporting an issue to ServiceNow: " + shortDescription);
+        logger.warn("Reporting an issue to Jsd: " + shortDescription);
         try {
             ticketReporter.reportWithContainerMessage(cm, e, shortDescription);
         } catch (Exception exception) {
-            logger.error("Failed to report issue to ServiceNow: ", exception);
+            logger.error("Failed to report issue to Jsd: ", exception);
         }
     }
 

@@ -2,7 +2,7 @@ package com.opuscapita.peppol.commons.queue.consume;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.eventing.OcEventReporter;
-import com.opuscapita.peppol.commons.eventing.SncTicketReporter;
+import com.opuscapita.peppol.commons.eventing.jsd.JsdTicketReporter;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -27,12 +27,12 @@ public class AsyncMessageProcessor implements ContainerMessageProcessor {
     private final static Logger logger = LoggerFactory.getLogger(AsyncMessageProcessor.class);
 
     private final OcEventReporter eventReporter;
-    private final SncTicketReporter ticketReporter;
+    private final JsdTicketReporter ticketReporter;
 
     private ContainerMessageConsumer containerMessageConsumer;
 
     @Autowired
-    public AsyncMessageProcessor(OcEventReporter eventReporter, SncTicketReporter ticketReporter) {
+    public AsyncMessageProcessor(OcEventReporter eventReporter, JsdTicketReporter ticketReporter) {
         this.eventReporter = eventReporter;
         this.ticketReporter = ticketReporter;
     }

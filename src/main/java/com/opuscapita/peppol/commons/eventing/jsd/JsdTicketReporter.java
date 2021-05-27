@@ -1,8 +1,10 @@
-package com.opuscapita.peppol.commons.eventing;
+package com.opuscapita.peppol.commons.eventing.jsd;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
-import com.opuscapita.peppol.commons.eventing.servicenow.ServiceNow;
-import com.opuscapita.peppol.commons.eventing.servicenow.SncEntity;
+import com.opuscapita.peppol.commons.eventing.jsd.Jsd;
+import com.opuscapita.peppol.commons.eventing.jsd.JsdEntity;
+import com.opuscapita.peppol.commons.eventing.TicketReporter;
+import com.opuscapita.peppol.commons.eventing.TicketContentFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SncTicketReporter implements TicketReporter {
+public class JsdTicketReporter implements TicketReporter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SncTicketReporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsdTicketReporter.class);
 
-    private final ServiceNow client;
+    private final Jsd client;
 
     @Autowired
-    public SncTicketReporter(ServiceNow client) {
+    public JsdTicketReporter(Jsd client) {
         this.client = client;
     }
 
@@ -56,12 +58,12 @@ public class SncTicketReporter implements TicketReporter {
 
     private void createTicket(String shortDescription, String detailedDescription, String customerId, String fileName) {
         try {
-            SncEntity ticket = new SncEntity(shortDescription, detailedDescription, customerId);
+            JsdEntity ticket = new JsdEntity(shortDescription, detailedDescription, customerId);
             client.insert(ticket);
 
-            logger.info("ServiceNow ticket created for " + fileName + " about " + shortDescription);
+            logger.info("Jsd ticket created for " + fileName + " about " + shortDescription);
         } catch (Exception e) {
-            logger.error("Failed to create SNC ticket for customer: " + customerId + ", file: " + fileName +
+            logger.error("Failed to create JSD ticket for customer: " + customerId + ", file: " + fileName +
                     " about " + shortDescription + " with data: " + detailedDescription, e);
         }
     }

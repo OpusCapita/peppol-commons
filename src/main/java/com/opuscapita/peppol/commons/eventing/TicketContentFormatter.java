@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class TicketContentFormatter {
 
-    static String getErrorDescription(ContainerMessage cm, Throwable e, String additionalDetails) {
+    public static String getErrorDescription(ContainerMessage cm, Throwable e, String additionalDetails) {
         String detailedDescription = "Failed to process message";
 
         detailedDescription += "\nFile name: " + cm.getFileName();
@@ -47,7 +47,7 @@ public class TicketContentFormatter {
         return detailedDescription;
     }
 
-    static String getErrorDescription(String customerId, String fileName, Throwable e, String additionalDetails) {
+    public static String getErrorDescription(String customerId, String fileName, Throwable e, String additionalDetails) {
         String detailedDescription = "Failed to process message";
 
         if (fileName != null) {
@@ -74,7 +74,7 @@ public class TicketContentFormatter {
         return detailedDescription;
     }
 
-    static String exceptionMessageToString(Throwable e) {
+    public static String exceptionMessageToString(Throwable e) {
         if (e == null) {
             return null;
         }
@@ -84,7 +84,7 @@ public class TicketContentFormatter {
         return e.getMessage();
     }
 
-    static String containerMessageDumb(ContainerMessage cm) {
+  public  static String containerMessageDumb(ContainerMessage cm) {
         Route route = cm.getRoute();
         ContainerMessageMetadata metadata = cm.getMetadata();
         return String.format("ContainerMessage{filename: %s, source: %s, step: %s, transmissionId: %s, " +

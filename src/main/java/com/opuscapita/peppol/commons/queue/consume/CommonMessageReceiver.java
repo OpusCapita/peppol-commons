@@ -2,7 +2,7 @@ package com.opuscapita.peppol.commons.queue.consume;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.ContainerMessageSerializer;
-import com.opuscapita.peppol.commons.eventing.SncTicketReporter;
+import com.opuscapita.peppol.commons.eventing.jsd.JsdTicketReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -19,13 +19,13 @@ public class CommonMessageReceiver {
 
     private final static Logger logger = LoggerFactory.getLogger(CommonMessageReceiver.class);
 
-    private final SncTicketReporter errorHandler;
+    private final JsdTicketReporter errorHandler;
     private final CommonMessageProcessor processor;
     private final ContainerMessageSerializer serializer;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    public CommonMessageReceiver(@NotNull SncTicketReporter errorHandler,
+    public CommonMessageReceiver(@NotNull JsdTicketReporter errorHandler,
                                  @NotNull CommonMessageProcessor processor,
                                  @NotNull ContainerMessageSerializer serializer) {
         this.processor = processor;
