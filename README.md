@@ -17,6 +17,9 @@ This project is being published as a library to [Maven Central Repository](https
 ### Publishing
 Every changes pushed to master branch will trigger a new release and auto-publish to maven central.
 
+IMPORTANT: This process is very slow and error prone.  Last few builds it took 24 hours before Maven was updated, and this was after many tries, and it was not 100% certain which try succeeded. This process should really be updated. Currently a workaround is to login to Nexus and remove the stage deployment manually (drop).  
+(The login is available on confluence)
+
 For a manuel publish, first you need to populate a gradle.properties file. (note that this file is ignored by git, please DO NOT push it).
 
 ```$xslt
@@ -54,6 +57,7 @@ If you want to test your changes locally, you can publish to your local reposito
 The version number has 3 parts: `[major].[minor].[patch]`.
 
 During circleci build process, the latest git tag is fetched. The patch version is increased by one and pushed back to git as a new tag.
+WORKAROUND: In case the version does not auto increase, you can create a manual release inside this GIT repository, with the new version there.
 
 To update major version, you need to create a new git tag manually.
  
