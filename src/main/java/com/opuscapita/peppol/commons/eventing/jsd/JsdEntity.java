@@ -2,6 +2,7 @@ package com.opuscapita.peppol.commons.eventing.jsd;
 
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -121,15 +122,8 @@ public class JsdEntity {
     }
 
     public String escape( String in ) {
-      String out;
 
-      out = in.replace("\n", "\\n");
-      out = out.replace("\r", "");
-      out = out.replace("\t", "\\t");
-      out = out.replace("\"", "\\\"");
-
-
-      return out;
+      return StringEscapeUtils.escapeJson( in );
 
     }
 

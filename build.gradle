@@ -110,6 +110,19 @@ extraArchive {
     sources = true
     tests = true
 }
+
+test {
+    testLogging {
+        // Make sure output from
+        // standard out or error is shown
+        // in Gradle output.
+        showStandardStreams = true
+
+        events 'standard_out', 'standard_error'
+    }
+}
+
+
 nexusStaging {
     numberOfRetries = 99
     delayBetweenRetriesInMillis = 9999

@@ -29,7 +29,7 @@ public class tickets {
         JsdTicketReporter jr = new JsdTicketReporter( client );
         System.out.println("Start testTicket");
         jr.reportWithoutContainerMessage("testit", "filename.xml", new Exception("it failed"), "Could not run");
-        System.out.println("After");
+        System.out.println("After"); 
     }
 
 }
